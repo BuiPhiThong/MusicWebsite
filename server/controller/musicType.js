@@ -14,6 +14,9 @@ const createMusicType = asynHandler(async(req,res)=>{
         mess: response ? response: 'Create failed!'
     })
 })
+
+
+
 const updateMusicType = asynHandler(async(req,res)=>{
     const {mtid}= req.params
     console.log(mtid);
