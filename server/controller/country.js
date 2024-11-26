@@ -14,7 +14,7 @@ const createCountry = asynHandler(async(req,res)=>{
 })
 const updateCountry = asynHandler(async(req,res)=>{
     const {cid}= req.params
-    if(!cid) throw new Error('Missing input!')
+    if(Object.keys(req.body).length===0) throw new Error('Missing input')
 
     const response = await Country.findByIdAndUpdate(cid,req.body,{new:true})
     return res.status(200).json({

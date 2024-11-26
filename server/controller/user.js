@@ -178,6 +178,35 @@ const getAllUser = asynHandler(async (req, res) => {
   });
 });
 
+const uploadImageUser = asynHandler(async(req,res)=>{
+  const {uid} = req.params
+  if(!req.file) throw new Error('Missing input!')
+
+    const updateImg = req.file.path
+    console.log(updateImg);
+    
+   const response = await User.findByIdAndUpdate(uid,{avatar: updateImg}, {new:true}) 
+
+    return res.status(200).json({
+      status: response? true : false,
+
+      mess: response ? response : 'Update Avatar  failed!'
+  })
+})
+
+const updateUser = asynHandler(async (req, res) => {
+  const { uid } = req.params;
+   if(Object.keys(req.body).length===0 && !req.file) throw new Error('Missing input')
+    const data={...req.body}
+    if(req.file){
+      data.avatar = req.file.path
+    }
+  const response = await User.findByIdAndUpdate(uid, data, { new: true });
+  return res.status(200).json({
+    success: response ? true : false,
+    mess: response ? response : "Update User failed!",
+  });
+});
 module.exports = {
   register,
   getAllUser,
@@ -185,5 +214,7 @@ module.exports = {
   refreshToken,
   logout,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  uploadImageUser,
+  updateUser
 };

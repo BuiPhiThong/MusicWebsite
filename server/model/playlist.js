@@ -16,7 +16,15 @@ var playlistSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  image:{
+    type: String
+  },
   songs: [{type: mongoose.Schema.Types.ObjectId,ref: "Song"}],
+  isPublic: {
+    type: Boolean,
+    default: false, // Mặc định là riêng tư
+  },
+  sharedWith: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Người dùng được chia sẻ playlist riêng tư
   deleted: {
     type: Number,
     default: 0,

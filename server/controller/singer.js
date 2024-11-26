@@ -58,7 +58,7 @@ const updatePlayListSinger = asynHandler(async (req, res) => {
 
 const updateSinger = asynHandler(async (req, res) => {
   const { sid } = req.params;
-  if (!sid) throw new Error("Missing input!");
+  if(Object.keys(req.body).length===0) throw new Error('Missing input')
 
   const response = await Singer.findByIdAndUpdate(sid, req.body, { new: true });
   return res.status(200).json({

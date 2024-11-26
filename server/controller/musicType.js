@@ -19,9 +19,9 @@ const createMusicType = asynHandler(async(req,res)=>{
 
 const updateMusicType = asynHandler(async(req,res)=>{
     const {mtid}= req.params
-    console.log(mtid);
+    // console.log(mtid);
     
-    if(!mtid) throw new Error('Missing input!')
+    if(Object.keys(req.body).length===0) throw new Error('Missing input')
 
     const response = await MusicType.findByIdAndUpdate(mtid,req.body,{new:true})
     return res.status(200).json({

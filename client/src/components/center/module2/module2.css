@@ -1,0 +1,9 @@
+ul.row img {
+    width: 152px; /* Chiều rộng cố định */
+    height: 152px; /* Chiều cao cố định */
+    object-fit: cover; 
+    border-radius: 8px; /* Tùy chọn: bo góc của ảnh */
+  }
+  .center_1{
+    color: #2daaed ;
+  }

@@ -1,0 +1,13 @@
+.carousel-item img {
+    object-fit: cover;
+    height: 400px; /* Chiều cao cho slider */
+    border-radius: 8px; /* Bo góc nếu cần */
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Màu nền cho nút điều hướng */
+    border-radius: 50%;
+    padding: 10px;
+  }
+  

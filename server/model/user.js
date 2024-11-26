@@ -44,14 +44,8 @@ const userSchema = new mongoose.Schema(
     },
     whislist: [
       {
-        songId: {
-          type: mongoose.Types.ObjectId,
-          ref: "Song",
-        },
-        singerId: {
-          type: mongoose.Types.ObjectId,
-          ref: "Singer",
-        },
+        songId: {type: mongoose.Types.ObjectId,ref: "Song"},
+        singerId: {type: mongoose.Types.ObjectId,ref: "Singer"},
       },
     ],
 

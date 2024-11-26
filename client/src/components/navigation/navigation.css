@@ -1,0 +1,22 @@
+.menu{
+    padding: 5px 0px 6px;
+
+}
+.logo img {
+    height: 50px; /* Chiều cao logo */
+    width: auto; /* Tự động căn chỉnh chiều rộng theo tỷ lệ */
+    margin-right: 10px; /* Khoảng cách với các phần tử bên cạnh */
+    object-fit: contain; 
+    border-radius:10px ;
+  }
+  
+/* .menu_1{
+    padding: 1px 16px 8px 0px;
+} */
+ .space_menu{
+    width: 1px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-right: 13px 10px;
+    
+ }

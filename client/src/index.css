@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+/* index.css */
+
+.app {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    max-width: 1520px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0 10px;
+        /* Giảm padding trên màn hình nhỏ */
+    }
+}

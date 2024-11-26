@@ -6,20 +6,14 @@ var albumSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  singerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Singer",
-    required: true,
-  },
-  releaseDate: {
-    type: String
-  },
-  songs: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Song",
-    },
+  paticipateSingerId: [
+    {type: mongoose.Schema.Types.ObjectId,ref: "Singer",required: true}
   ],
+  songs: [{type: mongoose.Schema.Types.ObjectId,ref: "Song",required:true}],
+  releaseDate: {
+    type: String,
+    required: true
+  },
   albumImg: {
     type: String,
   },
