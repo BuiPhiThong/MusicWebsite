@@ -14,17 +14,17 @@ var playlistSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
   image:{
-    type: String
+    type: String,
+    required:true
   },
   songs: [{type: mongoose.Schema.Types.ObjectId,ref: "Song"}],
-  isPublic: {
-    type: Boolean,
-    default: false, // Mặc định là riêng tư
-  },
-  sharedWith: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Người dùng được chia sẻ playlist riêng tư
+  // isPublic: {
+  //   type: Boolean,
+  //   default: false, // Mặc định là riêng tư
+  // },
+  // sharedWith: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Người dùng được chia sẻ playlist riêng tư
   deleted: {
     type: Number,
     default: 0,

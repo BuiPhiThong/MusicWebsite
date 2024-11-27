@@ -43,16 +43,27 @@ const updatePlayListSinger = asynHandler(async (req, res) => {
 
   if (name) currentPlaylist.name = name;
   if (description) currentPlaylist.description = description;
-  if (songs && Array.isArray(songs)) {
-    currentPlaylist.songs = [...new Set([...currentPlaylist.songs,...songs])];//* ghép hai mảng /1 là đang có sẵn /2 là gửi từ cilent lên
-  }
 
+  const existSongs = songs.filter(song=> currentPlaylist.songs.includes(song))
+  const newSongs = songs.filter(song=> !currentPlaylist.songs.includes(song))
+
+  if(existSongs.length >0){
+    return res.status(400).json({
+      success: false,
+      message: `These songs already exist in the playlist: ${existSongs.join(', ')}`
+  });
+  }
+  if(newSongs.length>0){
+    currentPlaylist.songs = [...currentPlaylist.songs,...newSongs];//* ghép hai mảng /1 là đang có sẵn /2 là gửi từ cilent lên
+  }
+  
   await singer.save();
 
+  const afterUpdate = singer.playlist.find((el) => el._id.toString() === plid);
   return res.status(200).json({
     success: true,
     message: "Playlist updated successfully!",
-    data: currentPlaylist,
+    data: afterUpdate,
   });
 });
 
