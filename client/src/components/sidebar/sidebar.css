@@ -1,3 +1,148 @@
-.border_all{
-    border-radius: 3rem;
+/* Căn chỉnh tiêu đề */
+h3.text-primary {
+    margin-bottom: 20px;
+    font-size: 24px;
 }
+
+/* Căn chỉnh các button trong nhóm */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+/* Tạo hiệu ứng hover cho các button */
+.btn:hover {
+    background-color: red;
+    color: white;
+}
+
+/* Căn chỉnh các danh sách nhạc */
+.list-music {
+    margin-top: 20px;
+}
+
+.list-music ul {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.one {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+}
+
+.one .info-one {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.one img {
+    height: 100px;
+    width: 100px; /* Thêm chiều rộng để ảnh không bị méo */
+    object-fit: cover;
+}
+
+/* Đặt số 1 vào góc dưới bên trái của ảnh */
+.number.special-1 {
+    position: absolute;
+    bottom: 5px; /* Đặt cách 5px từ dưới */
+    left: 5px; /* Đặt cách 5px từ bên trái */
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 32px;
+    border: #e74c3c solid 1px;
+    background: #e74c3c;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    z-index: 10; /* Đảm bảo số 1 không bị đè lên các phần tử khác */
+}
+
+/* Căn chỉnh tên bài hát và ca sĩ */
+.one .d-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.one .d-flex a {
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none; /* Bỏ gạch chân dưới */
+    color: rgba(142, 124, 124, 0.452); /* Thay đổi màu chữ thành #000000e0 */
+}
+
+.one .d-flex span {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Style riêng cho top 2 */
+.number.special-2 {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 32px;
+    border: #f39c12 solid 1px; /* Màu vàng cho top 2 */
+    background: #f39c12;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    z-index: 10;
+}
+
+.one:nth-child(2) .info-one {
+    gap: 50px; /* Thêm khoảng cách giữa ảnh và chữ cho top 2 */
+}
+
+/* Style riêng cho top 3 */
+.number.special-3 {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 32px;
+    border: #2ecc71 solid 1px; /* Màu xanh lá cho top 3 */
+    background: #2ecc71;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    z-index: 10;
+}
+.number.special-4 {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 32px;
+    border: #C0C0C0 solid 1px; /* Màu xanh lá cho top 3 */
+    background: #C0C0C0;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    z-index: 10;
+}
+.one:nth-child(3) .info-one {
+    gap: 50px; /* Thêm khoảng cách giữa ảnh và chữ cho top 3 */
+}
+
+.one:nth-child(4) .info-one {
+    gap: 50px; /* Thêm khoảng cách giữa ảnh và chữ cho top 3 */
+}
+
