@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./module1.css";
+import { apiGetItemOne } from "../../../apis/public";
 const Module1 = () => {
+
+  const [module,setModule]= useState([])
+  const fetchData = async () =>{
+    const response = await apiGetItemOne()
+    if(response.success) setModule(response.mess)
+  }
+
+  console.log(module);
+  
+  useEffect(()=>{
+
+    fetchData()
+  },[])
+
   return (
     <div>
       <h3 className="center_1">Vũ Trụ Nhạc Việt</h3>

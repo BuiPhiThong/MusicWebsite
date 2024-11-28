@@ -20,6 +20,10 @@ var playlistSchema = new mongoose.Schema({
     required:true
   },
   songs: [{type: mongoose.Schema.Types.ObjectId,ref: "Song"}],
+  typePlaylist:{
+    type: mongoose.Types.ObjectId,
+    ref:'PlaylistType'
+  },
   // isPublic: {
   //   type: Boolean,
   //   default: false, // Mặc định là riêng tư

@@ -6,10 +6,11 @@ const initialState = {
   isForgotPassword: false,
 };
 
-const authSlice = createSlice({
+const authReducer = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+
     setRegister: (state, action) => {
       state.isRegister = action.payload;
     },
@@ -23,8 +24,9 @@ const authSlice = createSlice({
       state.isForgotPassword = !state.isForgotPassword;
     },
   },
+
 });
 
-export const { setRegister, setForgotPassword, toggleRegister, toggleForgotPassword } = authSlice.actions;
+// export const { setRegister, setForgotPassword, toggleRegister, toggleForgotPassword } = authSlice.actions;
 
-export default authSlice;
+export default authReducer;

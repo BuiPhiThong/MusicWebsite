@@ -1,7 +1,8 @@
 // src/components/Login.js
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setRegister, setForgotPassword } from "../../reducer/authSlice"; // Import các actions
+import authReducer from "../../reducers/authSlice";
+// import { setRegister, setForgotPassword } from "../../reducers/authSlice"; // Import các actions
 import './login.css';
 import { useLocation } from "react-router-dom";
 
@@ -14,22 +15,22 @@ const Login = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("isRegister") === "true") {
-      dispatch(setRegister(true)); // Nếu isRegister là true, bật form đăng ký
+      dispatch(authReducer.actions.setRegister(true)); // Nếu isRegister là true, bật form đăng ký
     } else {
-      dispatch(setRegister(false)); // Nếu không, bật form đăng nhập
+      dispatch(authReducer.actions.setRegister(false)); // Nếu không, bật form đăng nhập
     }
   }, [location.search, dispatch]);
 
   // Hàm chuyển đổi giữa form đăng nhập và đăng ký
   const toggleForm = () => {
-    dispatch(setRegister(!isRegister));
-    dispatch(setForgotPassword(false)); // Nếu chuyển sang đăng ký, phải reset forgot password
+    dispatch(authReducer.actions.setRegister(!isRegister));
+    dispatch(authReducer.actions.setForgotPassword(false)); // Nếu chuyển sang đăng ký, phải reset forgot password
   };
 
   // Hàm chuyển đổi sang form Forgot Password
   const showForgotPassword = () => {
-    dispatch(setForgotPassword(true));
-    dispatch(setRegister(false)); // Nếu chuyển sang forgot password, phải reset đăng ký
+    dispatch(authReducer.actions.setForgotPassword(true));
+    dispatch(authReducer.actions.setRegister(false)); // Nếu chuyển sang forgot password, phải reset đăng ký
   };
 
   return (
