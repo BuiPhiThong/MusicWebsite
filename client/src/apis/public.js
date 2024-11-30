@@ -1,7 +1,7 @@
 import axios from "../axios";
 
-export const apiGetItemOne = () => axios({
-    url: '/playlist',
+export const apiGetModule = (tid) => axios({
+    url: `/playlist/${tid}`,
     method: 'get',
   });
 
