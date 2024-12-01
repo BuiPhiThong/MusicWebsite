@@ -24,6 +24,10 @@ var playlistSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref:'PlaylistType'
   },
+  views: { 
+    type: Number,
+    default: 0,
+  },
   // isPublic: {
   //   type: Boolean,
   //   default: false, // Mặc định là riêng tư

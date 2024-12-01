@@ -32,3 +32,8 @@ export const apiGetTop4to10SongsByCountry = (cid) =>axios({
   url:`/song/top4to10/${cid}`,
   method:'get'
 })
+
+export const apiPopupSearch = (textSearch)=> axios({
+  url:`/song/homesearch/?textSearch=${textSearch}`,
+  method:'get'
+})

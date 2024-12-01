@@ -1,22 +1,210 @@
-.menu{
+/* .menu {
     padding: 5px 0px 6px;
-
-}
-.logo img {
-    height: 50px; /* Chiều cao logo */
-    width: auto; /* Tự động căn chỉnh chiều rộng theo tỷ lệ */
-    margin-right: 10px; /* Khoảng cách với các phần tử bên cạnh */
-    object-fit: contain; 
-    border-radius:10px ;
   }
   
-/* .menu_1{
-    padding: 1px 16px 8px 0px;
-} */
- .space_menu{
+  .logo img {
+    height: 50px;
+    width: auto;
+    margin-right: 10px;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+  
+  .space_menu {
     width: 1px;
     height: 24px;
     background-color: rgba(0, 0, 0, 0.2);
     margin-right: 13px 10px;
-    
- }
+  }
+  
+  .search-container {
+    position: relative;
+  }
+  
+  .search-history-popup {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    width: 140%;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    padding: 5px 0;
+  }
+  
+  .history-header {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 12px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .clear-history-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+  }
+  
+  .history-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+  }
+  
+  .history-term {
+    flex-grow: 1;
+  }
+  
+  .history-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .remove-item-icon {
+    cursor: pointer;
+    font-size: 14px;
+    color: #888;
+  }
+   */
+
+
+   /* Menu container */
+.menu {
+  padding: 5px 0px 6px;
+}
+
+/* Logo */
+.logo img {
+  height: 50px;
+  width: auto;
+  margin-right: 10px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* Khoảng cách giữa các menu */
+.space_menu {
+  width: 1px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin-right: 13px 10px;
+}
+
+/* Container tìm kiếm */
+.search-container {
+  position: relative;
+}
+
+/* Popup lịch sử tìm kiếm */
+.search-history-popup {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  width: 150%; /* Đặt lại chiều rộng để phù hợp với input */
+  max-height: 300px;
+  overflow-y: auto; /* Cuộn dọc nếu nội dung dài */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  padding: 5px 0;
+  /* Thêm margin cho phần popup, giúp không bị quá sát các phần tử */
+  margin-top: 5px;
+}
+
+/* Phần header của lịch sử tìm kiếm */
+.history-header {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 12px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Thêm một chút khoảng cách giữa các phần tử bên trong */
+  margin-bottom: 10px;
+}
+
+/* Icon xóa lịch sử tìm kiếm */
+.clear-history-icon {
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  transition: color 0.3s;
+  margin-right: 12px;
+}
+
+.clear-history-icon:hover {
+  color: #f00; /* Đổi màu khi hover */
+}
+
+/* Các item trong lịch sử tìm kiếm */
+.history-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s, padding 0.2s;
+}
+
+/* Căn chỉnh cho từ khóa tìm kiếm */
+.history-term {
+  flex-grow: 1;
+}
+
+/* Hover cho các mục trong lịch sử */
+.history-item:hover {
+  background-color: #f0f0f0;
+  padding-left: 15px; /* Thêm padding khi hover để tạo hiệu ứng */
+}
+
+/* Icon xóa mục lịch sử */
+.remove-item-icon {
+  cursor: pointer;
+  font-size: 14px;
+  color: #888;
+  transition: color 0.3s;
+}
+
+/* Thêm hiệu ứng hover cho icon xóa */
+.remove-item-icon:hover {
+  color: #f00; /* Màu đỏ khi hover */
+}
+
+/* Phần lịch sử tìm kiếm */
+.history-section {
+  margin-bottom: 10px;
+}
+
+/* Tiêu đề của mỗi phần lịch sử */
+.history-section h6 {
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Khi không có lịch sử tìm kiếm */
+.history-section .no-history {
+  font-size: 14px;
+  color: #aaa;
+  text-align: center;
+}
+
+/* Thêm hiệu ứng cho toàn bộ popup khi hover vào popup */
+.search-history-popup:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

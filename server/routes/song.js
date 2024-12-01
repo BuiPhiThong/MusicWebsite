@@ -15,6 +15,7 @@ router.get('/topone/:cid',ctrls.getTop1SongByIdC)
 router.get('/toptwo/:cid',ctrls.getTop2SongByIdC)
 router.get('/topthree/:cid',ctrls.getTop3SongByIdC)
 router.get('/top4to10/:cid',ctrls.getTop4To10SongByIdC)
+router.get('/homesearch',ctrls.searchHome)
 
 module.exports=router
 
