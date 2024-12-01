@@ -5,12 +5,16 @@ const {isAdmin,verifyToken} = require('../middlewares/verify')
 const uploader = require('../config/cloudinary.config')
 
 router.post('/',ctrls.createSong)
+router.get('/',ctrls.listSongContribute)
 router.put('/:soid',ctrls.updateSong)
 router.put('/uploadimage/:soid',[verifyToken,isAdmin],uploader.single('songImg'),ctrls.uploadImageSong)
-router.put('/:soid/increaselistion',ctrls.incListMusic)
+router.put('/increaselistion/:soid',[verifyToken],ctrls.incListMusic)
 router.put('/:soid/audioPath',ctrls.updateAudioPath)
 router.delete('/:soid',ctrls.deleteSong)
-router.get('/',ctrls.listSongContribute)
+router.get('/topone/:cid',ctrls.getTop1SongByIdC)
+router.get('/toptwo/:cid',ctrls.getTop2SongByIdC)
+router.get('/topthree/:cid',ctrls.getTop3SongByIdC)
+router.get('/top4to10/:cid',ctrls.getTop4To10SongByIdC)
 
 module.exports=router
 

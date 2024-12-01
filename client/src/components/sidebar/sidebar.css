@@ -39,7 +39,6 @@ h3.text-primary {
 
 .one .info-one {
     display: flex;
-    align-items: center;
     gap: 10px;
     position: relative;
 }
@@ -75,15 +74,14 @@ h3.text-primary {
 }
 
 .one .d-flex a {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
     text-decoration: none; /* Bỏ gạch chân dưới */
-    color: rgba(142, 124, 124, 0.452); /* Thay đổi màu chữ thành #000000e0 */
+    color: #000000e0;
 }
 
 .one .d-flex span {
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: #acacac
 }
 
 /* Style riêng cho top 2 */
@@ -142,7 +140,8 @@ h3.text-primary {
     gap: 50px; /* Thêm khoảng cách giữa ảnh và chữ cho top 3 */
 }
 
-.one:nth-child(4) .info-one {
-    gap: 50px; /* Thêm khoảng cách giữa ảnh và chữ cho top 3 */
-}
-
+/* Áp dụng gap cho các phần tử từ Top 4 đến Top 10 */
+.one:nth-child(n+4):nth-child(-n+10) .info-one {
+    gap: 50px; /* Thêm khoảng cách giữa ảnh và chữ */
+  }
+  

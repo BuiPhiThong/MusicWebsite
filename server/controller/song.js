@@ -2,7 +2,7 @@ const Song = require("../model/song");
 const Singer = require("../model/singer");
 const asynHandler = require("express-async-handler");
 const { options } = require("../routes/song");
-
+const mongoose = require('mongoose')
 
 const createSong = asynHandler(async (req, res) => {
   const { songName, singerId } = req.body;
@@ -156,6 +156,148 @@ const uploadImageSong = asynHandler(async(req,res)=>{
 })
 
 
+// const getTop10SongByIdC= asynHandler(async(req,res)=>{
+//   const {cid} = req.params
+//   const objectIdC = new mongoose.Types.ObjectId(cid)
+//   const response = await Song.aggregate([
+//     { $match : { countryId: objectIdC, deleted : 0 } },
+//     {$sort : { listenCountWeek : -1 , createdAt: -1} },
+//     { $limit : 10 },
+//     { $project : {
+//       songName: 1,
+//       singerId:1,
+//       musictypeId:1,
+//       countryId: 1,
+//       songImg:1,
+//       listenCountWeek:1
+//     } }
+//   ])
+
+//   return res.status(200).json({
+//     success: response? true : false,
+//     mess: response? response : 'Can not get top 10 by country!!'
+//   })
+// })
+
+const getTop1SongByIdC = asynHandler(async (req, res) => {
+  const { cid } = req.params;
+  const objectIdC = new mongoose.Types.ObjectId(cid);
+  
+  const response = await Song.aggregate([
+    { $match: { countryId: objectIdC, deleted: 0 } },
+    { $sort: { listenCountWeek: -1, createdAt: -1 } },
+    { $limit: 1 },
+    {
+      $project: {
+        songName: 1,singerId: 1,musictypeId: 1,countryId: 1,songImg: 1,listenCountWeek: 1,
+      },
+    },
+    {
+      $lookup:{ from:"singers",localField:"singerId",foreignField:"_id",as:"singers"
+
+        ,pipeline:[{
+          $project:{singerName: 1}
+        }]
+      }
+    }
+  ]);
+
+  return res.status(200).json({
+    success: response ? true : false,
+    mess: response ? response : "Can not get top 1 by country!!",
+  });
+});
+
+const getTop2SongByIdC = asynHandler(async (req, res) => {
+  const { cid } = req.params;
+  const objectIdC = new mongoose.Types.ObjectId(cid);
+
+  const response = await Song.aggregate([
+    { $match: { countryId: objectIdC, deleted: 0 } },
+    { $sort: { listenCountWeek: -1, createdAt: -1 } },
+    { $skip: 1 }, // Skip the first result
+    { $limit: 1 },
+    {
+      $project: {
+        songName: 1,singerId: 1,musictypeId: 1,countryId: 1,songImg: 1,listenCountWeek: 1,
+      },
+    },
+    {
+      $lookup:{ from:"singers",localField:"singerId",foreignField:"_id",as:"singers"
+
+        ,pipeline:[{
+          $project:{singerName: 1}
+        }]
+      }
+    }
+  ]);
+
+  return res.status(200).json({
+    success: response ? true : false,
+    mess: response ? response : "Can not get top 2 by country!!",
+  });
+});
+
+const getTop3SongByIdC = asynHandler(async (req, res) => {
+  const { cid } = req.params;
+  const objectIdC = new mongoose.Types.ObjectId(cid);
+
+  const response = await Song.aggregate([
+    { $match: { countryId: objectIdC, deleted: 0 } },
+    { $sort: { listenCountWeek: -1, createdAt: -1 } },
+    { $skip: 2 }, // Skip the first two results
+    { $limit: 1 },
+    {
+      $project: {
+        songName: 1,singerId: 1,musictypeId: 1,countryId: 1,songImg: 1,listenCountWeek: 1,
+      },
+    },
+    {
+      $lookup:{ from:"singers",localField:"singerId",foreignField:"_id",as:"singers"
+
+        ,pipeline:[{
+          $project:{singerName: 1}
+        }]
+      }
+    }
+  ]);
+
+  return res.status(200).json({
+    success: response ? true : false,
+    mess: response ? response : "Can not get top 3 by country!!",
+  });
+});
+
+const getTop4To10SongByIdC = asynHandler(async (req, res) => {
+  const { cid } = req.params;
+  const objectIdC = new mongoose.Types.ObjectId(cid);
+
+  const response = await Song.aggregate([
+    { $match: { countryId: objectIdC, deleted: 0 } },
+    { $sort: { listenCountWeek: -1, createdAt: -1 } },
+    { $skip: 3 }, // Skip the first three results
+    { $limit: 7 }, // Get results from 4 to 10
+    {
+      $project: {
+        songName: 1,singerId: 1,musictypeId: 1,countryId: 1,songImg: 1,listenCountWeek: 1,
+      },
+    },
+    {
+      $lookup:{ from:"singers",localField:"singerId",foreignField:"_id",as:"singers"
+
+        ,pipeline:[{
+          $project:{singerName: 1}
+        }]
+      }
+    }
+  ]);
+
+  return res.status(200).json({
+    success: response ? true : false,
+    mess: response ? response : "Can not get top 4 to 10 by country!!",
+  });
+});
+
 module.exports = {
   createSong,
   updateSong,
@@ -164,5 +306,9 @@ module.exports = {
   updateAudioPath,
   incListMusic,
   listSongContribute,
-  uploadImageSong
+  uploadImageSong,
+  getTop1SongByIdC,
+  getTop2SongByIdC,
+  getTop3SongByIdC,
+  getTop4To10SongByIdC,
 };

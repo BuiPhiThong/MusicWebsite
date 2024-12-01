@@ -41,9 +41,19 @@ const listCountries = asynHandler(async(req,res)=>{
         mess: response ?response: 'Deleted failed!'
     })
 })
+
+const listTop3Country = asynHandler(async(req,res)=>{
+    
+    const response = await Country.find().limit(3)
+    return res.status(200).json({
+        success: response ? true : false,
+        mess: response ?response: 'Deleted failed!'
+    })
+})
 module.exports={
     createCountry,
     updateCountry,
     deleteCountry,
-    listCountries
+    listCountries,
+    listTop3Country
 }
