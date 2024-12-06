@@ -1,9 +1,9 @@
-export  {default as Navigation } from './navigation/Navigation'
-export  {default as Slider } from './slider/Slider'
-export  {default as Module1 } from './center/module1/Module1'
-export  {default as Module2 } from './center/module2/Module2'
-export  {default as Module3 } from './center/module3/Module3'
-export  {default as Sidebar } from './sidebar/Sidebar'
-export  {default as Content } from './content/Content'
+export { default as Navigation } from "./navigation/Navigation";
+export { default as Slider } from "./slider/Slider";
+export { default as Module1 } from "./center/module1/Module1";
+export { default as Module2 } from "./center/module2/Module2";
+export { default as Module3 } from "./center/module3/Module3";
+export { default as Sidebar } from "./sidebar/Sidebar";
+export { default as Content } from "./content/Content";
+export { default as SearchHome } from "./searchHome/searchHome";
 // export  {default as Module1 } from './content/Content'
-

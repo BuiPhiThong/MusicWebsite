@@ -14,7 +14,7 @@ const Content = () => {
         <Module3 />
       </div>
 
-      <div className="col-md-3">
+      <div className="col-md-3 border">
         <Sidebar />
       </div>
     </div>

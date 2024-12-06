@@ -6,6 +6,7 @@ const songRouter = require('./song')
 const albumRouter = require('./album')
 const playlistRouter = require('./playlist')
 const playlistTypeRouter = require('./playlistType')
+const searchRouter = require('./search')
 const { errHandler,notFound} = require('../middlewares/err')
 
 const initRoutes = (app) => {
@@ -17,6 +18,7 @@ const initRoutes = (app) => {
     app.use('/api/album',albumRouter)
     app.use('/api/playlist',playlistRouter)
     app.use('/api/playlisttype',playlistTypeRouter)
+    app.use('/api/homesearch',searchRouter)
 
 
 

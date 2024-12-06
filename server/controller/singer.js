@@ -128,6 +128,9 @@ const userFollow = asynHandler(async (req, res) => {
   }
 });
 
+const searchPlaylist = asynHandler(async(req,res)=>{
+  
+})
 
 
 module.exports = {

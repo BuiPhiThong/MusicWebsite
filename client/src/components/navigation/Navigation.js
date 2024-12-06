@@ -86,18 +86,43 @@ const Navigation = () => {
     }
   };
   
+  // const handleSearchSubmit = () => {
+  //   if (searchQuery) {
+  //     // Lưu lịch sử tìm kiếm vào localStorage
+  //     const updatedHistory = [...searchHistory, searchQuery];
+  //     localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
+  //     setSearchHistory(updatedHistory); // Cập nhật state lịch sử tìm kiếm
+      
+  //     // Gửi tìm kiếm hoặc thực hiện hành động tìm kiếm
+  //     dispatch(fetchDataPopupSearch(searchQuery));
+  //     setShowHistory(false); // Ẩn lịch sử khi tìm kiếm
+  //   }
+  // };
+
+  
   const handleSearchSubmit = () => {
     if (searchQuery) {
+      // Loại bỏ các từ khóa trùng lặp trước khi lưu
+      const updatedHistory = [
+        searchQuery, 
+        ...searchHistory.filter(query => query !== searchQuery) // Lọc bỏ từ khóa trùng
+      ];
+  
       // Lưu lịch sử tìm kiếm vào localStorage
-      const updatedHistory = [...searchHistory, searchQuery];
       localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
       setSearchHistory(updatedHistory); // Cập nhật state lịch sử tìm kiếm
-      
+  
       // Gửi tìm kiếm hoặc thực hiện hành động tìm kiếm
       dispatch(fetchDataPopupSearch(searchQuery));
       setShowHistory(false); // Ẩn lịch sử khi tìm kiếm
+  
+      // Chuyển hướng tới URL tìm kiếm với query
+      navigate(`/search?keyword=${encodeURIComponent(searchQuery)}`);
     }
   };
+  
+  
+
   const handleRemoveHistoryItem = (term) => {
     // Xóa từ lịch sử tìm kiếm, ví dụ sử dụng LocalStorage hoặc Redux
     const updatedHistory = searchHistory.filter((item) => item !== term);
@@ -295,6 +320,7 @@ const Navigation = () => {
           </div>
         </div>
       </div>
+      <hr style={{margin:'0px'}}/>
     </div>
   );
 };

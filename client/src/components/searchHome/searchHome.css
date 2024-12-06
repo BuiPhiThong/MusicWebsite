@@ -1,0 +1,143 @@
+
+ .title_search {
+    margin-bottom: 20px; /* Đảm bảo có khoảng cách giữa tiêu đề và danh sách */
+  }
+  
+  .search-list {
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: block;
+    margin-top: 20px;
+  }
+  
+  .search-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #333333;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 5px;
+    margin-bottom: 10px; /* Thêm khoảng cách giữa các mục */
+  }
+  
+  /* .search-list li:hover {
+    background-color: #f0f0f0;
+  } */
+  
+  .search-list li + li {
+    margin-left: 10px;
+  }
+  
+  .filter-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    border-left: 1px solid #ddd;
+    margin-left: 15px;
+  }
+  
+  .filter-item:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+  }
+  
+  .title_search a {
+    font-size: 24px;
+    color: #333333;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 20px 0 10px 0;
+  }
+  
+  .title_search a span {
+    font-size: 16px;
+    color: #888888;
+    font-weight: normal;
+    text-transform: none;
+  }
+  
+  .sn_search_single_song {
+    width: 100%;
+    float: left;
+    border-bottom: 1px solid #f3f3f3;
+    padding: 16px 0;
+}
+
+.sn_search_single_song .thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    float: left;
+}
+
+.sn_search_single_song .box_info .title_song {
+    margin: 17px 0 3px 0;
+}
+
+.ms_kw {
+    font-weight: 400;
+    color: #0689ba;
+    text-transform: capitalize;
+    font-size: 14px;
+    display: inline;
+    text-align: left;
+    /* border-bottom: dotted rgba(255, 57, 57, 1.00) 1px; */
+}
+.name_singer{
+    color: #00000080;
+    display: inline;
+    font-size: 13px;
+    line-height: 16px;
+    text-align: left;
+    text-transform: capitalize;
+}
+
+
+.sn_search_single_song {
+    width: 100%;
+    float: left;
+    border-bottom: 1px solid #f3f3f3;
+    padding: 13px 0;
+    position: relative; /* Để các icon có thể được đặt tuyệt đối trong vùng này */
+  }
+  
+  .sn_search_single_song .thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+    margin-right: 20px; /* Khoảng cách giữa ảnh và thông tin bài hát */
+  }
+  
+  .box_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .icon-actions {
+    position: absolute;
+    top: 0; /* Đưa các icon lên gần phía trên */
+    right: 0; /* Đẩy sang phía bên phải */
+    /* display: flex; */
+    flex-direction: column; /* Sắp xếp các icon theo chiều dọc */
+    margin-top: 10px; /* Thêm khoảng cách giữa các icon */
+  }
+  
+  .icon-actions > * {
+    margin-bottom: 10px; /* Khoảng cách giữa các icon */
+  }
+  
+  .sn_title_info_key {
+    width: auto;
+    float: left;
+    color: #888888;
+    font-size: 14px;
+    margin: 20px 0 18px 0;
+}
