@@ -141,3 +141,20 @@
     font-size: 14px;
     margin: 20px 0 18px 0;
 }
+
+.pagination button {
+  border-radius: 40%; /* Bo tròn hoàn toàn (dạng hình tròn) */
+  padding: 5px 10px; /* Thêm padding để tạo khoảng cách giữa text và viền */
+  border: 1px solid #ddd; /* Viền nhẹ cho nút */
+  background-color: transparent; /* Nền trong suốt */
+  cursor: pointer; /* Thêm hiệu ứng con trỏ khi di chuột qua */
+}
+
+.pagination button.active {
+  background-color: #4CAF50; /* Nền xanh cho trang hiện tại */
+  color: white; /* Màu chữ trắng */
+}
+
+.pagination button:hover:not(.active) {
+  background-color: #ddd; /* Nền xám khi hover */
+}

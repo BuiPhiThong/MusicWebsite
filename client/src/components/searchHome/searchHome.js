@@ -4,6 +4,8 @@ import Sidebar from "../sidebar/Sidebar";
 import { FaHeartCirclePlus } from "react-icons/fa6";
 import { BsCopy } from "react-icons/bs";
 import { FaFilter } from "react-icons/fa";
+import { GrNext } from "react-icons/gr";
+import { GrPrevious } from "react-icons/gr";
 import "./searchHome.css";
 import { useDispatch, useSelector } from "react-redux";
 import { data, useLocation, useNavigate } from "react-router-dom";
@@ -30,6 +32,8 @@ const SearchHome = () => {
     loadingSongSearch,
     errorSongSearch,
     currentPageSong,
+    startPage,
+    pagesToShow,
     totalPageSong,
     countSong,
 
@@ -109,16 +113,35 @@ const SearchHome = () => {
     // }
   };
 
-  const handlePageChange = (newPage) => {
-    if (newPage > 0 && newPage <= totalPageSong) {
-      dispatch(dataSearchReducer.actions.setCurrentPageSong(newPage)); // Cập nhật trang hiện tại
+  // const handlePageChange = (newPage) => {
+  //   if (newPage > 0 && newPage <= totalPageSong) {
+  //     dispatch(dataSearchReducer.actions.setCurrentPageSong(newPage)); // Cập nhật trang hiện tại
+  //     dispatch(
+  //       fetchDataSongSearch({ text: keySearch, page: newPage, limit: 5 })
+  //     );
+  //   }
+  // };
+
+  const handlePageChange = (page) => {
+    dispatch(dataSearchReducer.actions.setCurrentPageSong(page));
+
+    // Điều chỉnh startPage nếu cần
+    if (page < startPage) {
+      dispatch(dataSearchReducer.actions.updateStartPage(Math.max(page, 1)));
+    } else if (page >= startPage + pagesToShow) {
       dispatch(
-        fetchDataSongSearch({ text: keySearch, page: newPage, limit: 5 })
+        dataSearchReducer.actions.updateStartPage(page - pagesToShow + 1)
       );
     }
+
+    // Gọi API để lấy dữ liệu của trang
+    dispatch(fetchDataSongSearch({ text: keySearch, page, limit: 5 }));
   };
 
-  console.log(keySearch);
+  const visiblePages = Array.from(
+    { length: Math.min(pagesToShow, totalPageSong - startPage + 1) },
+    (_, index) => startPage + index
+  );
 
   return (
     <div className="container">
@@ -284,7 +307,10 @@ const SearchHome = () => {
                         </h3>
                         <div>
                           {song.singerId.map((name, index) => (
-                            <a className="name_singer text-decoration-none">
+                            <a
+                              key={index}
+                              className="name_singer text-decoration-none"
+                            >
                               {name.singerName}
                             </a>
                           ))}
@@ -298,26 +324,68 @@ const SearchHome = () => {
                   ))}
                 </ul>
               </div>
-              <div>dáda</div>
-              {listSongSearch?.length > 0 && (
-                <div className="pagination">
-                  <button
-                    disabled={currentPageSong === 1}
+              <div>.</div>
+              <div className="pagination">
+                {/* Nút Previous (chuyển nhóm trang) */}
+                <button
+                  disabled={startPage === 1}
+                  onClick={() =>
+                    dispatch(
+                      dataSearchReducer.actions.updateStartPage(
+                        Math.max(startPage - pagesToShow, 1)
+                      )
+                    )
+                  }
+                >
+                  Previous
+                </button>
+
+                {/* Icon Previous (chuyển trang liền kề) */}
+                {currentPageSong > 1 && (
+                  <GrPrevious
+                    className="fs-2 cursor-pointer"
                     onClick={() => handlePageChange(currentPageSong - 1)}
-                  >
-                    Previous
-                  </button>
-                  <span>
-                    Page {currentPageSong} of {totalPageSong}
-                  </span>
+                  />
+                )}
+
+                {/* Danh sách số trang */}
+                {visiblePages.map((page) => (
                   <button
-                    disabled={currentPageSong === totalPageSong}
-                    onClick={() => handlePageChange(currentPageSong + 1)}
+                    key={page}
+                    className={`page-btn mx-1 ${
+                      currentPageSong === page ? "active" : ""
+                    }`}
+                    onClick={() => handlePageChange(page)}
                   >
-                    Next
+                    {page}
                   </button>
-                </div>
-              )}
+                ))}
+
+                {/* Icon Next (chuyển trang liền kề) */}
+                {currentPageSong < totalPageSong && (
+                  <GrNext
+                    className="fs-2 cursor-pointer"
+                    onClick={() => handlePageChange(currentPageSong + 1)}
+                  />
+                )}
+
+                {/* Nút Next (chuyển nhóm trang) */}
+                <button
+                  disabled={startPage + pagesToShow > totalPageSong}
+                  onClick={() =>
+                    dispatch(
+                      dataSearchReducer.actions.updateStartPage(
+                        Math.min(
+                          startPage + pagesToShow,
+                          totalPageSong - pagesToShow + 1
+                        )
+                      )
+                    )
+                  }
+                >
+                  Next
+                </button>
+              </div>
             </div>
           ) : (
             <div></div>

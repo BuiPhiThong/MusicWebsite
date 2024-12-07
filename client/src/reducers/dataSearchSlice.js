@@ -46,6 +46,8 @@ const dataSearchReducer = createSlice({
     loadingSongSearch: false,
     errorSongSearch: null,
     currentPageSong:1,
+    startPage: 1, // Vị trí bắt đầu của số trang hiển thị
+    pagesToShow: 5, // Số lượng trang hiển thị
     totalPageSong:0,
     countSong:0,
 
@@ -60,6 +62,9 @@ const dataSearchReducer = createSlice({
   reducers: {
     setCurrentPageSong: (state, action) => {
       state.currentPageSong = action.payload;
+    },
+    updateStartPage: (state, action) => {
+      state.startPage = action.payload;
     },
   },
   extraReducers: (builder) => {

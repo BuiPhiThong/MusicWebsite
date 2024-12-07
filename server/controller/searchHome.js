@@ -23,7 +23,7 @@ const searchHome = asynHandler(async (req, res) => {
         let countDataPlaylistAll=0
         let countDataPlaylistSingerAll=0
         if (all) {
-            dataSongAll = await Song.find({ songName: allSearch, deleted: 0 }).select('songName songImg').populate('singerId', 'singerName').limit(10);
+            dataSongAll = await Song.find({ songName: allSearch, deleted: 0 }).select('songName songImg').populate('singerId', 'singerName').limit(8);
             countDataSongAll = await Song.countDocuments({ songName: allSearch, deleted: 0 })
 
             dataplaylistAll = await Playlist.find({ name: allSearch, deleted: 0 }).select('name').limit(10);
