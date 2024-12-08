@@ -17,14 +17,19 @@ const createPlayListSinger = asynHandler(async (req, res) => {
   const singer = await Singer.findById(sid);
 
   if (!singer) throw new Error("Not found Singer");
-
+  const existNamePlaylist = singer.playlist.find((playlist)=> playlist.name === name)
+  if(existNamePlaylist){
+    throw new Error('Exited Name Playlist')
+  }
   const result = await Singer.updateOne(
     { _id: sid },
     { $push: { playlist: { name, description, songs } } },
     { new: true }
   );
-  if (result.nModified === 0) throw new Error('Failed to create playlist!') // là
-
+  if (result.nModified === 0){
+    throw new Error('Failed to create playlist!') // là
+  }
+  
   const afterSinger = await Singer.findById(sid);
   return res.status(200).json({
     success: true,

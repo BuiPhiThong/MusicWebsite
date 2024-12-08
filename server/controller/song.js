@@ -115,6 +115,7 @@ const listSongContribute = asynHandler(async (req, res) => {
       singerName: { $regex: req.query.singerName, $options: "i" },
     }; // *gán vào format query singerName
   }
+  
   const singer = await Singer.find(singerSearch).select("_id");
   if (singer.length) {
     formatQueries.singerId = { $in: singer.map((singer) => singer._id) }; //*chuyển sang tìm song bằng singerId

@@ -3,7 +3,8 @@ const path ={
     HOME:'',
     ALL:'*',
     LOGIN:'/login',
-    SEARCH:'/search'
+    SEARCH:'/search',
+    ListenPlaylist:'/danh-sach'
 }
 
 export default path

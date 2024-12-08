@@ -6,4 +6,5 @@ export { default as Module3 } from "./center/module3/Module3";
 export { default as Sidebar } from "./sidebar/Sidebar";
 export { default as Content } from "./content/Content";
 export { default as SearchHome } from "./searchHome/searchHome";
+export { default as ListenPlaylist } from "./listen/ListenPlaylist";
 // export  {default as Module1 } from './content/Content'

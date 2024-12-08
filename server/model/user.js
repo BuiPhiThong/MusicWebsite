@@ -1,6 +1,7 @@
 const mongoose = require("mongoose"); // Erase if already required
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const { type } = require("os");
 // Declare the Schema of the Mongo model
 const userSchema = new mongoose.Schema(
   {
@@ -44,8 +45,9 @@ const userSchema = new mongoose.Schema(
     },
     whislist: [
       {
+        nameWhislist:{type:String},
+        imageWhislist:{type:String},
         songId: {type: mongoose.Types.ObjectId,ref: "Song"},
-        singerId: {type: mongoose.Types.ObjectId,ref: "Singer"},
       },
     ],
 

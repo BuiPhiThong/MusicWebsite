@@ -30,7 +30,7 @@ var singerSchema = new mongoose.Schema(
     playlist: [
       {
         img:{type:String},
-        name: { type: String, require: true },
+        name: { type: String, require: true,unique:true },
         songs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Song" }],
         description: { type: String },
       },
