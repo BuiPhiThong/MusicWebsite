@@ -1,11 +1,15 @@
 const PlayList = require("../model/playlist");
 const PlaylistType = require("../model/playlistType");
 const asyncHandler = require("express-async-handler");
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { default: slugify } = require("slugify");
+const slugtify = require('slugify')
 const createPlaylist = asyncHandler(async (req, res) => {
   const { name, image } = req.body;
-  if (!name || !image) throw new Error("Missing Input!");
-
+  if (Object.keys(req.body).length === 0) throw new Error('Missing Input');
+  if(name){
+    req.body.slug= slugtify(name)
+  }
   const response = await PlayList.create(req.body);
 
   return res.status(200).json({
@@ -18,7 +22,9 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   const { plid } = req.params;
   if (Object.keys(req.body).length === 0)
     throw new Error("Dont have data to update!");
-
+  if(req.body.name){
+    req.body.slug= slugtify(name)
+  }
   const response = await PlayList.findByIdAndUpdate(plid, req.body, {
     new: true,
   });
@@ -116,6 +122,39 @@ const getPlayListByTypeId = asyncHandler(async (req, res) => {
   }
 });
 
+const getPlaylistById = asyncHandler(async(req,res)=>{
+  const {plid} =req.params
+  console.log(plid);
+  
+  const response = await PlayList.findById(plid)
+  return res.status(200).json({
+    success: response? true : false,
+    data: response? response:'Can not found playlist'
+  })
+})
+
+const updateSlugManyPlaylist = asyncHandler(async (req, res) => {
+  const { plid } = req.body
+  if(!plid || !Array.isArray(plid) || plid.length ===0){
+    throw new Error('Missing Input')
+  }
+  const playlists =await PlayList.find({_id: {$in: plid}})
+
+  const dataUpdate = playlists.map((data)=>{
+    const slug = slugify(`${data.name}`)
+    return {
+      updateOne:{
+        filter:{_id : data._id},
+        update:{slug:slug}
+      }
+    }
+  })
+  const result = await PlayList.bulkWrite(dataUpdate)
+  return res.status(200).json({
+    success: result? true : false,
+    data: result,
+});
+});
 module.exports = {
   createPlaylist,
   updatePlaylist,
@@ -123,4 +162,6 @@ module.exports = {
   getPlaylist,
   addSongtoPlaylist,
   getPlayListByTypeId,
+  getPlaylistById,
+  updateSlugManyPlaylist
 };

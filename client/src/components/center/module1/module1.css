@@ -1,9 +1,36 @@
 ul.row img {
-    width: 152px; /* Chiều rộng cố định */
-    height: 152px; /* Chiều cao cố định */
-    object-fit: cover; 
-    border-radius: 8px; /* Tùy chọn: bo góc của ảnh */
-  }
-  .center_1{
-    color: #2daaed ;
-  }
+  width: 152px; /* Chiều rộng cố định */
+  height: 152px; /* Chiều cao cố định */
+  object-fit: cover;
+  border-radius: 8px; /* Tùy chọn: bo góc của ảnh */
+  position: relative;
+}
+
+.playlist-item {
+  position: relative;
+  display: inline-block;
+  text-align: center;
+}
+
+.image-container {
+  position: relative;
+}
+
+.play-icon {
+  font-size: 40px; /* Kích thước biểu tượng */
+  color: white; /* Màu sắc của biểu tượng */
+  position: absolute;
+  top: 50%; /* Căn giữa theo chiều dọc */
+  left: 50%; /* Căn giữa theo chiều ngang */
+  transform: translate(-50%, -50%); /* Đảm bảo căn chính xác */
+  opacity: 0; /* Ẩn biểu tượng khi không hover */
+  transition: opacity 0.3s ease; /* Hiệu ứng mượt mà khi hiện/ẩn */
+}
+
+.playlist-item:hover .play-icon {
+  opacity: 1; /* Hiển thị biểu tượng khi hover */
+}
+
+.center_1 {
+  color: #2daaed;
+}

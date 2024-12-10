@@ -16,6 +16,7 @@ router.get('/toptwo/:cid',ctrls.getTop2SongByIdC)
 router.get('/topthree/:cid',ctrls.getTop3SongByIdC)
 router.get('/top4to10/:cid',ctrls.getTop4To10SongByIdC)
 router.get('/homesearch',ctrls.searchHome)
+router.post('/updateslugs', [verifyToken, isAdmin], ctrls.updateSongsSlugs);
 
 module.exports=router
 

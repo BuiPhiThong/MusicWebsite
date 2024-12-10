@@ -4,7 +4,7 @@ const path ={
     ALL:'*',
     LOGIN:'/login',
     SEARCH:'/search',
-    ListenPlaylist:'/danh-sach'
+    ListenPlaylist:'/danh-sach/:slug'
 }
 
 export default path

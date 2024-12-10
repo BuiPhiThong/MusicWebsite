@@ -4,23 +4,42 @@ const PlayList = require("../model/playlist");
 const asynHandler = require("express-async-handler");
 const { options } = require("../routes/song");
 const mongoose = require("mongoose");
+const slug = require('slugify');
+const { default: slugify } = require("slugify");
 
 const createSong = asynHandler(async (req, res) => {
   const { songName, singerId } = req.body;
-  if (!songName || !singerId) throw new Error("Missing input!");
+  if (Object.keys(req.body).length === 0) throw new Error('Missing Input');
 
+  const nameSinger = await Singer.findById(singerId).select('singerName -_id');
+  if (!nameSinger) throw new Error('Singer not found'); 
+
+  if (songName) {
+    req.body.slug = slugify(`${songName} ${nameSinger.singerName}`, { lower: true });
+  }
   const response = await Song.create(req.body);
   return res.status(200).json({
     success: response ? true : false,
-    mess: response ? response : "Create failed!",
+    message: response ? response : "Create failed!",
   });
 });
+
 
 const updateSong = asynHandler(async (req, res) => {
   const { soid } = req.params;
   if (Object.keys(req.body).length === 0) throw new Error("Missing input");
 
+  if(req.body.songName){
+    const currentSong =await Song.findById(soid).select('singerId -_id');
+    console.log(currentSong);
+    
+    const singerIds = currentSong.singerId
+     
+    const nameSinger = await Singer.findById(singerIds).select('singerName -_id');
+    req.body.slug = slugify(`${req.body.songName} ${nameSinger.singerName}`, { lower: true });
+  }
   const response = await Song.findByIdAndUpdate(soid, req.body, { new: true });
+
   return res.status(200).json({
     success: response ? true : false,
     mess: response ? response : "Update failed!",
@@ -403,6 +422,41 @@ const getTop4To10SongByIdC = asynHandler(async (req, res) => {
   });
 });
 
+const updateSongsSlugs = asynHandler(async (req, res) => {
+  const { ids } = req.body; // Mảng các ID bài hát
+
+  
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: "Missing input" });
+  }
+
+  const songs = await Song.find({ _id: { $in: ids } }).populate('singerId', 'singerName');
+  console.log(songs);
+  
+  if (songs.length === 0) {
+      return res.status(404).json({ success: false, message: "Songs not found" });
+  }
+
+  const updates = songs.map(song => {
+      const slug = slugify(`${song.songName} ${song.singerId.map(singer => singer.singerName).join(' ')}`, { lower: true });
+      return {
+          updateOne: {
+              filter: { _id: song._id },
+              update: { slug: slug }
+          }
+      };
+  });
+
+  // Cập nhật tất cả các bài hát
+  const result = await Song.bulkWrite(updates);
+
+  return res.status(200).json({
+      success: true,
+      message: result,
+  });
+});
+
+
 module.exports = {
   createSong,
   updateSong,
@@ -417,4 +471,5 @@ module.exports = {
   getTop3SongByIdC,
   getTop4To10SongByIdC,
   searchHome,
+  updateSongsSlugs
 };

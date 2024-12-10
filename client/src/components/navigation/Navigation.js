@@ -86,20 +86,6 @@ const Navigation = () => {
     }
   };
   
-  // const handleSearchSubmit = () => {
-  //   if (searchQuery) {
-  //     // Lưu lịch sử tìm kiếm vào localStorage
-  //     const updatedHistory = [...searchHistory, searchQuery];
-  //     localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
-  //     setSearchHistory(updatedHistory); // Cập nhật state lịch sử tìm kiếm
-      
-  //     // Gửi tìm kiếm hoặc thực hiện hành động tìm kiếm
-  //     dispatch(fetchDataPopupSearch(searchQuery));
-  //     setShowHistory(false); // Ẩn lịch sử khi tìm kiếm
-  //   }
-  // };
-
-  
   const handleSearchSubmit = () => {
     if (searchQuery) {
       // Loại bỏ các từ khóa trùng lặp trước khi lưu
