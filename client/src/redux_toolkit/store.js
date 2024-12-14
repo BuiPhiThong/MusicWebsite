@@ -8,6 +8,7 @@ import countriesReducer from '../reducers/countrySlice';
 import songsSlice from '../reducers/topSongSlice';
 import popupSearchReducer from '../reducers/popupSearchSlice';
 import dataSearchReducer from '../reducers/dataSearchSlice';
+import listenPlaylistReducer from '../reducers/listenPlaylistSlice';
 const store = configureStore({
   reducer: {
     auth: authReducer.reducer, 
@@ -17,7 +18,8 @@ const store = configureStore({
     top3Country: countriesReducer.reducer,
     songs: songsSlice.reducer,
     popupSearch:popupSearchReducer.reducer,
-    dataSearch:dataSearchReducer.reducer
+    dataSearch:dataSearchReducer.reducer,
+    listenPlaylist:listenPlaylistReducer.reducer
   },
 });
 

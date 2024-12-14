@@ -1,4 +1,5 @@
 const PlayList = require("../model/playlist");
+const Singer = require('../model/singer')
 const PlaylistType = require("../model/playlistType");
 const asyncHandler = require("express-async-handler");
 const mongoose = require('mongoose');
@@ -101,7 +102,7 @@ const getPlayListByTypeId = asyncHandler(async (req, res) => {
     const response = await PlayList.aggregate([
       { $match: { typePlaylist: objectIdTid, deleted: 0 } }, //giống where bên SQL
       { $sample: { size: 5 } }, 
-      { $project: {name:1 , image:1 , songs: 1}}, //giống bên SQL ở đầu câu query
+      { $project: {name:1 , image:1 , songs: 1,slug:1}}, //giống bên SQL ở đầu câu query
       { $lookup: { from: "songs", localField: "songs", foreignField: "_id", as: "songs",// Join SQL " as " là giá trị trả ra
         
         pipeline:[{
@@ -122,14 +123,26 @@ const getPlayListByTypeId = asyncHandler(async (req, res) => {
   }
 });
 
-const getPlaylistById = asyncHandler(async(req,res)=>{
-  const {plid} =req.params
-  console.log(plid);
+const getPlaylistBySlug = asyncHandler(async(req,res)=>{
+  const {slug} =req.params
+  console.log(slug);
   
-  const response = await PlayList.findById(plid)
+  // const response = await PlayList.findOne({slug:slug}).populate('songs','songName')
+  const response = await PlayList.findOne({ slug: slug })
+  .populate({
+    path: 'songs', // Populate danh sách bài hát
+    select:'songName audioPaths songImg songLyrics',
+    populate: {
+      path: 'singerId',
+      select: 'singerName', // Chỉ lấy các trường cần thiết
+    },
+  }).select('name views image');
+
+  const lengthPlaylist= response.songs.length
   return res.status(200).json({
     success: response? true : false,
-    data: response? response:'Can not found playlist'
+    data: response? response:'Can not found playlist',
+    countSong:lengthPlaylist
   })
 })
 
@@ -162,6 +175,6 @@ module.exports = {
   getPlaylist,
   addSongtoPlaylist,
   getPlayListByTypeId,
-  getPlaylistById,
+  getPlaylistBySlug,
   updateSlugManyPlaylist
 };

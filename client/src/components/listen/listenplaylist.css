@@ -22,13 +22,13 @@
   }
   
   .info_playlist .title_playlist {
-    font-size: 70px;
+    font-size: 50px;
   }
   .info_playlist .description_playlist {
     font-size: 25px;
   }
   .menu_right .lyric{
-    font-size: 70px;
+    font-size: 50px;
   }
   .playlist-artist,
   .playlist-duration {
@@ -137,6 +137,23 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
+/* Thêm hiệu ứng hover cho từng hàng trong bảng */
+/* Đổi màu nền khi hover qua các hàng có class 'song-row' */
+/* Đảm bảo rằng hàng trong bảng có màu nền đỏ khi hover */
+.song-row:hover {
+  background-color: red !important;  /* Dùng !important để đảm bảo CSS này được ưu tiên */
+  cursor: pointer;
+}
+
+/* Thêm màu sắc cho biểu tượng khi hover vào hàng */
+.song-row:hover .icon {
+  color: white; /* Màu của biểu tượng khi hover */
+}
+
+/* Optional: thêm hiệu ứng hover mượt mà */
+.song-row {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
 
 /* Phần điều khiển phát nhạc nằm ngang ở dưới cùng màn hình */

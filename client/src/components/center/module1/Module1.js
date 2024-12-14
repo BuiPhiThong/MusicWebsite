@@ -21,7 +21,7 @@ const Module1 = () => {
     // Cleanup: Hủy interval khi component bị unmount
     return () => clearInterval(intervalId);
   }, [dispatch, tid]);
-console.log(module1);
+
 
   return (
     <div>
@@ -36,7 +36,7 @@ console.log(module1);
             module1.map((playlist, index) => (
               <li key={index} className="col-md-2 playlist-item">
                 <div className="image-container">
-                  <a href={`/danh-sach/${createSlug(playlist.name)}`}>
+                  <a href={`/danh-sach/${playlist.slug}`}>
                     <img
                       src={playlist.image} // Sử dụng trường image từ API
                       alt={playlist.name} // Sử dụng tên playlist làm alt cho ảnh

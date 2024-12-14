@@ -9,6 +9,6 @@ router.put('/updatesong/:plid', [verifyToken, isAdmin], ctrls.addSongtoPlaylist)
 router.delete('/:plid', [verifyToken, isAdmin], ctrls.deletePlaylist);
 router.get('/', ctrls.getPlaylist);
 router.get('/:tid', ctrls.getPlayListByTypeId); // Đây là đường dẫn GET chính xác
-router.get('/listenplaylist/:plid', ctrls.getPlaylistById); // Đây là đường dẫn GET chính xác
+router.get('/listenplaylist/:slug', ctrls.getPlaylistBySlug); // Đây là đường dẫn GET chính xác
 router.post('/updateslugs',[verifyToken,isAdmin],ctrls.updateSlugManyPlaylist)
 module.exports = router;

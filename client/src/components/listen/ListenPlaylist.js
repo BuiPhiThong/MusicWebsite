@@ -10,69 +10,103 @@ import { FaVolumeUp } from "react-icons/fa";
 import { Modal, Button } from "react-bootstrap"; // Import Modal từ react-bootstrap
 import "./listenplaylist.css";
 import { useParams } from "react-router-dom";
+import { apiGetListenSong } from "../../apis/listen";
+import { useDispatch, useSelector } from "react-redux";
+import listenPlaylistReducer, {
+  fetchDataListenPlaylist,
+} from "../../reducers/listenPlaylistSlice";
 
 const ListenPlaylist = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [songProgress, setSongProgress] = useState(0);
-  const [showMusicPlayer, setShowMusicPlayer] = useState(false);
-  const [volume, setVolume] = useState(100); // Mức âm lượng mặc định là 100%
-  const [currentTime, setCurrentTime] = useState(0); // Thời gian hiện tại của bài hát
-  const [duration, setDuration] = useState(0); // Tổng thời gian bài hát
-  const [savedTime, setSavedTime] = useState(0); // Lưu trữ thời gian đã dừng
+  const dispatch = useDispatch();
+  const audioRef = useRef(null);
+  const {
+    isPlaying,
+    songProgress,
+    volume,
+    currentTime,
+    duration,
+    savedTime,
+    showMusicPlayer,
+    playlistData,
+    currentSongIndex,
+    isLoading,
+    error,
+  } = useSelector((state) => state.listenPlaylist);
 
-  const audioRef = useRef(null); // Tham chiếu tới thẻ <audio>
-  
-  const audioUrl = "https://vnno-ne-2-tf-a128-z3.zmdcdn.me/90a19c89a3d2eca643021510388e05c9?authen=exp=1733911720~acl=/90a19c89a3d2eca643021510388e05c9*~hmac=f3ca1f2f265f76f49f1bb40a5e2c4dca"
-  const { slug } = useParams() 
-  console.log(slug);
-  
-  // Hàm điều khiển phát / dừng nhạc
-  const handlePlayPause = () => {
-    if (isPlaying) {
-      audioRef.current.pause(); // Tạm dừng bài hát
-    } else {
-      audioRef.current.play(); // Phát bài hát từ thời gian hiện tại (savedTime)
+  // const audioUrl =
+  //   "https://vnno-zn-5-tf-a128-z3.zmdcdn.me/15dc8004b277efefbe166fd820472b9e?authen=exp=1734339436~acl=/15dc8004b277efefbe166fd820472b9e*~hmac=11c2abde2f0232dedaa32ca63aaf15a5";
+
+  const { slug } = useParams();
+  // const [data, setData] = useState([]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const dataFetch = await apiGetListenSong(slug);
+  //     setData(dataFetch);
+  //   };
+  //   fetchData();
+  // }, []);
+  useEffect(() => {
+    dispatch(fetchDataListenPlaylist(slug));
+  }, [dispatch, slug]);
+  const currentSong = playlistData?.songs?.[currentSongIndex];
+
+  useEffect(() => {
+    if (audioRef.current && currentSong) {
+      // Lấy đường dẫn nhạc từ data và set vào audioRef
+      audioRef.current.src = currentSong.audioPaths.normal; // Hoặc audioPaths.vip nếu bạn muốn chất lượng cao
+      audioRef.current.play();
     }
-    setIsPlaying(!isPlaying); // Cập nhật trạng thái phát nhạc
+  }, [currentSong]);
+  console.log(playlistData);
+
+  const handlePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        dispatch(listenPlaylistReducer.actions.togglePlay(false));
+      } else {
+        audioRef.current.play();
+        dispatch(listenPlaylistReducer.actions.togglePlay(true));
+      }
+    }
   };
-  
 
-  // Hàm cập nhật tiến độ bài hát
-  // Hàm cập nhật tiến độ bài hát
-const updateProgress = () => {
-  if (audioRef.current) {  // Kiểm tra nếu audioRef.current tồn tại
-    const current = audioRef.current.currentTime;
-    const total = audioRef.current.duration;
-    const progress = (current / total) * 100;
-    setSongProgress(progress); // Cập nhật tiến độ bài hát
-    setCurrentTime(current); // Cập nhật thời gian hiện tại
-  }
-};
-
+  const updateProgress = () => {
+    if (audioRef.current) {
+      // Kiểm tra nếu audioRef.current tồn tại
+      const current = audioRef.current.currentTime;
+      const total = audioRef.current.duration;
+      const progress = (current / total) * 100;
+      dispatch(listenPlaylistReducer.actions.setSongProgress(progress));
+      dispatch(listenPlaylistReducer.actions.setCurrentTime(current));
+    }
+  };
 
   // Thực hiện cập nhật tiến độ mỗi giây
   useEffect(() => {
-    if (isPlaying && showMusicPlayer) {  // Chỉ chạy khi đang phát nhạc và modal mở
+    if (isPlaying && showMusicPlayer) {
+      // Chỉ chạy khi đang phát nhạc và modal mở
       const interval = setInterval(updateProgress, 1000);
       return () => clearInterval(interval);
     }
-  }, [isPlaying, showMusicPlayer]);  // Khi tắt modal (setShowMusicPlayer = false), interval sẽ được clear
-  
+  }, [isPlaying, showMusicPlayer]); // Khi tắt modal (setShowMusicPlayer = false), interval sẽ được clear
 
-  // Hàm đóng modal
   const closeModal = () => {
     // Lưu thời gian hiện tại vào savedTime
-    setSavedTime(currentTime);
-    setShowMusicPlayer(false);
-    audioRef.current && audioRef.current.pause();  // Dừng nhạc khi đóng modal
-    setIsPlaying(false);  // Đảm bảo trạng thái không còn là "đang phát"
+    dispatch(listenPlaylistReducer.actions.setSavedTime(currentTime));
+    // Đóng modal
+    dispatch(listenPlaylistReducer.actions.toggleMusicPlayer(false));
+    // Dừng nhạc khi đóng modal
+    if (audioRef.current) {
+      audioRef.current.pause();
+      // Đảm bảo cập nhật trạng thái isPlaying về false khi đóng modal
+      dispatch(listenPlaylistReducer.actions.togglePlay(false));
+    }
   };
-  
-  
 
-  // Hàm điều chỉnh âm lượng
   const handleVolumeChange = (e) => {
-    setVolume(e.target.value);
+    dispatch(listenPlaylistReducer.actions.setVolume(e.target.value));
+
     audioRef.current.volume = e.target.value / 100; // Điều chỉnh âm lượng của thẻ audio
   };
 
@@ -83,13 +117,20 @@ const updateProgress = () => {
     return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
   };
 
+  // Hàm cập nhật thời gian khi kéo thanh tiến độ
+  const handleSeek = (e) => {
+    const seekTime = (e.target.value / 100) * duration; // Tính toán thời gian từ giá trị của thanh tiến độ
+    audioRef.current.currentTime = seekTime; // Cập nhật vị trí của bài hát
+    // setSongProgress(e.target.value); // Cập nhật tiến độ thanh slider
+    dispatch(listenPlaylistReducer.actions.setSongProgress(e.target.value));
+  };
+  const handleSongSelect = (index, song) => {
+    dispatch(listenPlaylistReducer.actions.setCurrentSongIndex(index));
+    const selectedAudioUrl = song.audioPaths.normal; // Hoặc song.audioPaths.vip nếu cần
+    dispatch(listenPlaylistReducer.actions.setAudioUrl(selectedAudioUrl));
 
-// Hàm cập nhật thời gian khi kéo thanh tiến độ
-const handleSeek = (e) => {
-  const seekTime = (e.target.value / 100) * duration; // Tính toán thời gian từ giá trị của thanh tiến độ
-  audioRef.current.currentTime = seekTime; // Cập nhật vị trí của bài hát
-  setSongProgress(e.target.value); // Cập nhật tiến độ thanh slider
-};
+    dispatch(listenPlaylistReducer.actions.togglePlay(true));
+  };
 
   return (
     <div className="container">
@@ -106,9 +147,9 @@ const handleSeek = (e) => {
                 />
               </div>
               <div className="info_playlist">
-                <h1 className="title_playlist">Daily mix 2</h1>
-                <div>Justin Bieber</div>
-                <div>50 songs, about 3hr</div>
+                <h1 className="title_playlist">{playlistData?.name}</h1>
+                <div>Various Singer</div>
+                <div>{playlistData?.countSong} Bài hát, about 3hr</div>
               </div>
             </div>
           </div>
@@ -117,7 +158,11 @@ const handleSeek = (e) => {
               <FaCirclePlay
                 fontSize="60px"
                 className="mt-3 mb-3"
-                onClick={() => setShowMusicPlayer(true)}
+                onClick={() =>
+                  dispatch(
+                    listenPlaylistReducer.actions.toggleMusicPlayer(true)
+                  )
+                }
               />
 
               <MdAddCircleOutline fontSize="40px" className="mx-3 mt-2" />
@@ -136,16 +181,25 @@ const handleSeek = (e) => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>
-                      <RiHeartAddLine fontSize="18px" />
-                      <BsDownload className="mx-2" />
-                      <LuExternalLink className="mx-1" />
-                    </td>
-                  </tr>
+                  {playlistData?.songs?.map((song, index) => (
+                    <tr
+                      key={index}
+                      onClick={() => handleSongSelect(index, song)}
+                      className="song-row"
+                    >
+                      <th scope="row">{index + 1}</th>
+                      <td>{song?.songName}</td>
+                      {song?.singerId?.map((el, index) => (
+                        <td>{el?.singerName}</td>
+                      ))}
+
+                      <td>
+                        <RiHeartAddLine fontSize="18px" />
+                        <BsDownload className="mx-2" />
+                        <LuExternalLink className="mx-1" />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -157,7 +211,7 @@ const handleSeek = (e) => {
       </div>
 
       {/* Music Player Modal */}
-      {showMusicPlayer && (
+      {/* {showMusicPlayer && (
         <div className="music-modal">
           <div className="close-btn" onClick={closeModal}>
             <IoMdClose />
@@ -194,28 +248,125 @@ const handleSeek = (e) => {
           </div>
 
           <div className="song-time mx-2">
-            <span>{formatTime(currentTime)}/{formatTime(duration)}</span>
+            <span>
+              {formatTime(currentTime)}/{formatTime(duration)}
+            </span>
           </div>
 
           <div className="progress-bar">
-  <input
-    type="range"
-    min="0"
-    max="100"
-    value={songProgress}
-    onChange={handleSeek}
-    className="progress-slider"
-  />
-</div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={songProgress}
+              onChange={handleSeek}
+              className="progress-slider"
+            />
+          </div>
 
-
-          {/* Thẻ audio để phát nhạc */}
           <audio
             ref={audioRef}
             src={audioUrl}
             preload="auto"
-            onLoadedMetadata={() => setDuration(audioRef.current.duration)} // Cập nhật tổng thời gian bài hát
+            onLoadedMetadata={() => {
+              dispatch(
+                listenPlaylistReducer.actions.setDuration(
+                  audioRef.current.duration
+                )
+              );
+              audioRef.current.currentTime = savedTime; // Nếu mở lại thì phát từ savedTime
+            }}
             onTimeUpdate={updateProgress} // Cập nhật tiến độ khi phát nhạc
+          />
+        </div>
+      )} */}
+
+      {showMusicPlayer && (
+        <div className="music-modal">
+          <div className="close-btn" onClick={closeModal}>
+            <IoMdClose />
+          </div>
+          <div className="song-info">
+          <img
+        src={playlistData?.songs[currentSongIndex]?.songImg || "https://stc-id.nixcdn.com/v11/images/avatar_default.jpg"}
+        alt="Song"
+      />
+      <div>
+        {/* Hiển thị tên bài hát và tên ca sĩ của bài hát đang phát */}
+        <h5>{playlistData?.songs[currentSongIndex]?.songName}</h5> {/* Tên bài hát */}
+        <p>
+          {playlistData?.songs[currentSongIndex]?.singerId?.map((singer, idx) => (
+            <span key={idx}>{singer.singerName}{idx < playlistData.songs[currentSongIndex].singerId.length - 1 ? ", " : ""}</span>
+          ))}
+        </p> {/* Ca sĩ */}
+      </div>
+          </div>
+
+          <div className="controls">
+            {isPlaying ? (
+              <FaPause onClick={handlePlayPause} />
+            ) : (
+              <FaCirclePlay onClick={handlePlayPause} />
+            )}
+
+            <div className="volume-control">
+              <FaVolumeUp className="volume-icon" />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume}
+                onChange={handleVolumeChange}
+                className="volume-slider"
+              />
+            </div>
+          </div>
+
+          <div className="song-time mx-2">
+            <span>
+              {formatTime(currentTime)}/{formatTime(duration)}
+            </span>
+          </div>
+
+          <div className="progress-bar">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={songProgress}
+              onChange={handleSeek}
+              className="progress-slider"
+            />
+          </div>
+
+          <audio
+            ref={audioRef}
+            src={playlistData?.songs[currentSongIndex]?.audioPaths?.normal}
+            preload="auto"
+            onLoadedMetadata={() => {
+              dispatch(
+                listenPlaylistReducer.actions.setDuration(
+                  audioRef.current.duration
+                )
+              );
+              audioRef.current.currentTime = savedTime; // Nếu mở lại thì phát từ savedTime
+            }}
+            onTimeUpdate={updateProgress} // Cập nhật tiến độ khi phát nhạc
+            onEnded={() => {
+              // Tự động chuyển sang bài tiếp theo khi bài hát kết thúc
+              if (currentSongIndex < playlistData?.songs.length - 1) {
+                dispatch(
+                  listenPlaylistReducer.actions.setCurrentSongIndex(
+                    currentSongIndex + 1
+                  )
+                );
+              } else {
+                dispatch(listenPlaylistReducer.actions.setCurrentSongIndex(0));
+              }
+
+              // Đảm bảo phát nhạc ngay sau khi chuyển bài
+              dispatch(listenPlaylistReducer.actions.togglePlay(true));
+            }}
           />
         </div>
       )}
