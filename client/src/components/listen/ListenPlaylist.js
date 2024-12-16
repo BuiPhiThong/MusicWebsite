@@ -33,9 +33,6 @@ const ListenPlaylist = () => {
     error,
   } = useSelector((state) => state.listenPlaylist);
 
-  // const audioUrl =
-  //   "https://vnno-zn-5-tf-a128-z3.zmdcdn.me/15dc8004b277efefbe166fd820472b9e?authen=exp=1734339436~acl=/15dc8004b277efefbe166fd820472b9e*~hmac=11c2abde2f0232dedaa32ca63aaf15a5";
-
   const { slug } = useParams();
   // const [data, setData] = useState([]);
   // useEffect(() => {

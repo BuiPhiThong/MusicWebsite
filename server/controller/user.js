@@ -48,7 +48,7 @@ const login = asynHandler(async (req, res) => {
         user._id,
         { refreshToken: refreshToken },
         { new: true }
-      );
+      )
 
       // Lưu refreshToken vào cookie
       res.cookie("refreshToken", refreshToken, {
@@ -81,6 +81,8 @@ const refreshToken = asynHandler(async (req, res) => {
       .json({ success: false, message: "No refresh token in cookie!" });
   }
   const decoded = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
+  console.log(decoded);
+  
   // Kiểm tra `refreshToken` trong cookie so với token trong DB
   const match = await User.findOne({
     _id: decoded._id,

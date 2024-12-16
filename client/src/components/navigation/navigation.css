@@ -1,84 +1,4 @@
-/* .menu {
-    padding: 5px 0px 6px;
-  }
-  
-  .logo img {
-    height: 50px;
-    width: auto;
-    margin-right: 10px;
-    object-fit: contain;
-    border-radius: 10px;
-  }
-  
-  .space_menu {
-    width: 1px;
-    height: 24px;
-    background-color: rgba(0, 0, 0, 0.2);
-    margin-right: 13px 10px;
-  }
-  
-  .search-container {
-    position: relative;
-  }
-  
-  .search-history-popup {
-    position: absolute;
-    top: 35px;
-    left: 0;
-    width: 140%;
-    max-height: 300px;
-    overflow-y: auto;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    padding: 5px 0;
-  }
-  
-  .history-header {
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 12px;
-    background-color: #f1f1f1;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .clear-history-icon {
-    cursor: pointer;
-    font-size: 18px;
-    color: #888;
-  }
-  
-  .history-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s;
-  }
-  
-  .history-term {
-    flex-grow: 1;
-  }
-  
-  .history-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .remove-item-icon {
-    cursor: pointer;
-    font-size: 14px;
-    color: #888;
-  }
-   */
 
-
-   /* Menu container */
 .menu {
   padding: 5px 0px 6px;
 }
@@ -207,4 +127,60 @@
 /* Thêm hiệu ứng cho toàn bộ popup khi hover vào popup */
 .search-history-popup:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.user-menu {
+  position: relative; 
+  display: flex; 
+  align-items: center; 
+  cursor: pointer; 
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover; 
+  border: 2px solid #fff;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%; 
+  right: 0; 
+  background-color: #fff; 
+  border: 1px solid #ddd; 
+  border-radius: 8px;
+  width: 150px; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+  z-index: 9999; /* Tăng z-index nếu cần */
+}
+
+
+.dropdown-menu.show {
+  display: flex; /* Hiển thị khi có class show */
+}
+
+
+.dropdown-item {
+  padding: 10px 15px; 
+  font-size: 14px; 
+  color: #333; 
+  cursor: pointer; 
+  text-align: center;
+  border-bottom: 1px solid #eee; 
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1050; /* Hoặc giá trị cao hơn nếu cần */
 }
