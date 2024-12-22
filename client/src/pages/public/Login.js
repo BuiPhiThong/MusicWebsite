@@ -38,7 +38,7 @@ function Login() {
       swal("Success", "Login successful!", "success");
       navigate('/')
     } else if (errorLogin) {
-      swal("Error", errorLogin.message, "error");
+      swal("Error", errorLogin.response.data.message,"error");
     }
   }, [isLogged, errorLogin,navigate]);
   // Hàm chuyển đổi giữa form đăng nhập và đăng ký

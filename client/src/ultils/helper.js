@@ -1,16 +1,15 @@
-const diacritics = require("diacritics");
+// src/ultils/authHelpers.js
+import {jwtDecode} from "jwt-decode";
+export const isTokenExpired = (accessToken) => {
+  try {
+    if (!accessToken) return true;
 
-export const createSlug = (str) => {
-    str = str.trim(); // loại bỏ khoảng trắng đầu và cuối
-    str = str.toLowerCase(); // chuyển toàn bộ chuỗi sang chữ thường
+    const decoded = jwtDecode(accessToken); // Giải mã JWT
+    const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại (giây)
     
-    // Loại bỏ các dấu tiếng Việt
-    str = diacritics.remove(str)
-
-    // Xử lý chuỗi để tạo slug
-    str = str.replace(/[^a-z0-9 -]/g, '') // loại bỏ các ký tự không hợp lệ
-             .replace(/\s+/g, '-') // thay thế khoảng trắng bằng dấu '-'
-             .replace(/-+/g, '-'); // thay thế nhiều dấu '-' liên tiếp bằng 1 dấu '-'
-
-    return str;
+    return decoded.exp <= currentTime; // Trả về true nếu token đã hết hạn
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return true; // Nếu giải mã lỗi, xem như token hết hạn
+  }
 };

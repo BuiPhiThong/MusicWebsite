@@ -11,6 +11,7 @@ router.get('/forgotpassword', ctrls.forgotPassword)
 router.put('/resetpassword', ctrls.resetPassword)
 router.post('/logout',[verifyToken],ctrls.logout) 
 router.get('/',[verifyToken,isAdmin],ctrls.getAllUser) 
+router.get('/current',[verifyToken],ctrls.getCurrent) 
 
 // router.put('/uploadimage/:uid',[verifyToken,isAdmin],uploader.single('avatar'),ctrls.uploadImageUser)
 

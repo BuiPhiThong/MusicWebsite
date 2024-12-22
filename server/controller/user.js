@@ -54,7 +54,7 @@ const login = asynHandler(async (req, res) => {
       res.cookie("refreshToken", refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production", // Dùng HTTPS khi môi trường là production
         sameSite: "Strict",
       });
 
@@ -209,6 +209,22 @@ const updateUser = asynHandler(async (req, res) => {
     mess: response ? response : "Update User failed!",
   });
 });
+
+const getCurrent = asynHandler(async (req, res) => {
+  const { _id } = req.user;
+  const user = await User.findById(_id); // Lấy người dùng duy nhất
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "User not found or AccessToken is invalid!",
+    });
+  }
+  return res.status(200).json({
+    success: true,
+    mess: user,
+  });
+});
+
 module.exports = {
   register,
   getAllUser,
@@ -218,5 +234,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   uploadImageUser,
-  updateUser
+  updateUser,
+  getCurrent
 };

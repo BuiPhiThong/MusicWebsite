@@ -11,7 +11,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDataPopupSearch } from "../../reducers/popupSearchSlice";
 import { IoIosMusicalNotes } from "react-icons/io";
-import authReducer from "../../reducers/authSlice";
+import authReducer, { fetchCurrent, refreshAccessToken } from "../../reducers/authSlice";
+import axios from "axios";
+import { isTokenExpired } from "../../ultils/helper"; // Import hàm kiểm tra token
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -27,7 +29,11 @@ const Navigation = () => {
 
   // Lấy dữ liệu tìm kiếm từ Redux store
   const { dataPopup, loadingPopup } = useSelector((state) => state.popupSearch);
-  const { isLogged, user } = useSelector((state) => state.auth);
+  const { isLogged, user ,errorCurrent,accessToken} = useSelector((state) => state.auth);
+  useEffect(()=>{
+    if(isLogged && accessToken) dispatch(fetchCurrent())
+  },[dispatch,isLogged,accessToken])
+
   // Lấy lịch sử tìm kiếm từ localStorage khi component mount
   useEffect(() => {
     const storedHistory =
@@ -149,6 +155,27 @@ const Navigation = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+
+  
+  useEffect(() => {
+    const checkToken = async () => {
+      if (accessToken && isTokenExpired(accessToken)) {
+        try {
+          // Gọi refreshAccessToken nếu token đã hết hạn
+          await dispatch(refreshAccessToken());
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+        }
+      }
+    };
+  
+    // Kiểm tra và refresh token khi component mount
+    if (accessToken) {
+      checkToken();
+    }
+  }, [dispatch, accessToken]); // Phụ thuộc vào accessToken để kiểm tra lại khi token thay đổi
+  
 
   return (
     <div className="row align-items-center pt-3">
