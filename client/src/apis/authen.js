@@ -11,6 +11,16 @@ export const apiRefreshToken = () =>axios({
     method:'post'
 })
 
+export const apiRegister = (register) =>axios({
+    url:'/user/register',
+    method:'post',
+    data:register
+})
+export const apiFinalRegister = (token) =>axios({
+    url: `/user/finalregister/${token}`, // Thêm token vào URL
+    method: 'get'
+})
+
 export const apiGetCurrent = () =>axios({
     url:'/user/current',
     method:'get',

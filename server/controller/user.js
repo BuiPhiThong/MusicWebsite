@@ -1,10 +1,12 @@
 const User = require("../model/user");
+const TempRegister = require("../model/temRegister");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const asynHandler = require("express-async-handler");
 const { genAccessToken, genRefreshToken } = require("../middlewares/jwt");
 const { sendEmail } = require("../ultils/sendMail");
-const crypto = require('crypto')
+const crypto = require("crypto");
+const uniquid = require("uniqid");
 
 const register = asynHandler(async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -13,18 +15,65 @@ const register = asynHandler(async (req, res) => {
     throw new Error("Missing input!");
   }
 
-  const user = await User.findOne({ email: email });
-  // console.log(user);
+  const userExists = await User.findOne({ email });
+  if (userExists) throw new Error("Email has already been registered!");
 
-  if (user) throw new Error("Email has been existed!!");
-
-  const createUser = await User.create(req.body);
-
-  return res.status(200).json({
-    success: true,
-    mess: createUser ? createUser : "Create User Failed!",
+  const regisToken = uniquid(); // Tạo token duy nhất
+  await TempRegister.create({
+    firstname,
+    lastname,
+    email,
+    password,
+    regisToken,
   });
+
+  const html = `To complete your registration, please click the link below. The link will expire in 15 minutes:
+    <a href="${process.env.URL_CLIENT}/finalregister/${regisToken}">Click here</a>`;
+
+  await sendEmail({
+    email,
+    html,
+    subject: "Email Verification",
+  });
+
+  return res.status(200).json({ success: true, message: "Verification email sent" });
 });
+
+const finalRegister = asynHandler(async (req, res) => {
+  const { token } = req.params;
+
+  const tempUser = await TempRegister.findOne({ regisToken: token });
+
+  if (!tempUser) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or expired token.",
+    });
+  }
+
+  const newUser = await User.create({
+    firstname: tempUser.firstname,
+    lastname: tempUser.lastname,
+    email: tempUser.email,
+    password: tempUser.password,
+  });
+
+  await TempRegister.deleteOne({ regisToken: token });
+
+  if (newUser) {
+    return res.status(200).json({
+      success: true,
+      message: "Account verified successfully!",
+    });
+  } else {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create user. Please try again.",
+    });
+  }
+});
+
+
 
 const login = asynHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -48,7 +97,7 @@ const login = asynHandler(async (req, res) => {
         user._id,
         { refreshToken: refreshToken },
         { new: true }
-      )
+      );
 
       // Lưu refreshToken vào cookie
       res.cookie("refreshToken", refreshToken, {
@@ -82,7 +131,7 @@ const refreshToken = asynHandler(async (req, res) => {
   }
   const decoded = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
   console.log(decoded);
-  
+
   // Kiểm tra `refreshToken` trong cookie so với token trong DB
   const match = await User.findOne({
     _id: decoded._id,
@@ -130,12 +179,13 @@ const forgotPassword = asynHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) throw new Error("Email has been not existed!");
   const resetToken = user.createPasswordChangToken();
- await user.save()
+  await user.save();
   const html = `Để chuyển sang trang đổi mật khẩu, bạn cần click vào đổi mật khẩu. Link sẽ hết hạn sau 15 phút kể từ khi nhận được email:
      <a href="${process.env.URL_SERVER}/api/user/reset-password/${resetToken}">Đổi mật khẩu</a>`;
   const object = {
     email,
     html,
+    subject: "Forgot Password",
   };
   const result = await sendEmail(object);
   return res.status(200).json({
@@ -144,32 +194,32 @@ const forgotPassword = asynHandler(async (req, res) => {
   });
 });
 
-const resetPassword = asynHandler(async(req,res)=>{
-    const {password, token } = req.body
-    // console.log(password);
-    
-    if(!password || !token) throw new Error('Missing input')
+const resetPassword = asynHandler(async (req, res) => {
+  const { password, token } = req.body;
+  // console.log(password);
 
-    const checkToken =   crypto.createHash("sha256").update(token).digest("hex")
+  if (!password || !token) throw new Error("Missing input");
 
-    const user = await User.findOne({
-      passwordResetToken: checkToken,
-      passwordResetExpire:{$gt: Date.now()}
-    }).select('-refreshToken')
-    // console.log(user);
-    
-    user.password = password
-    user.passwordResetToken= undefined,
-    user.passwordResetExpire=undefined,
-    user.passwordChangedAt=Date.now()
+  const checkToken = crypto.createHash("sha256").update(token).digest("hex");
 
-   await user.save()
+  const user = await User.findOne({
+    passwordResetToken: checkToken,
+    passwordResetExpire: { $gt: Date.now() },
+  }).select("-refreshToken");
+  // console.log(user);
 
-    return res.status(200).json({
-      success : user?true:false,
-      mess:user?'Change Password Successfully!': 'Some thing went wrong!'
-    })
-})
+  user.password = password;
+  (user.passwordResetToken = undefined),
+    (user.passwordResetExpire = undefined),
+    (user.passwordChangedAt = Date.now());
+
+  await user.save();
+
+  return res.status(200).json({
+    success: user ? true : false,
+    mess: user ? "Change Password Successfully!" : "Some thing went wrong!",
+  });
+});
 
 const getAllUser = asynHandler(async (req, res) => {
   const allUser = await User.find();
@@ -180,29 +230,34 @@ const getAllUser = asynHandler(async (req, res) => {
   });
 });
 
-const uploadImageUser = asynHandler(async(req,res)=>{
-  const {uid} = req.params
-  if(!req.file) throw new Error('Missing input!')
+const uploadImageUser = asynHandler(async (req, res) => {
+  const { uid } = req.params;
+  if (!req.file) throw new Error("Missing input!");
 
-    const updateImg = req.file.path
-    console.log(updateImg);
-    
-   const response = await User.findByIdAndUpdate(uid,{avatar: updateImg}, {new:true}) 
+  const updateImg = req.file.path;
+  console.log(updateImg);
 
-    return res.status(200).json({
-      status: response? true : false,
+  const response = await User.findByIdAndUpdate(
+    uid,
+    { avatar: updateImg },
+    { new: true }
+  );
 
-      mess: response ? response : 'Update Avatar  failed!'
-  })
-})
+  return res.status(200).json({
+    status: response ? true : false,
+
+    mess: response ? response : "Update Avatar  failed!",
+  });
+});
 
 const updateUser = asynHandler(async (req, res) => {
   const { uid } = req.params;
-   if(Object.keys(req.body).length===0 && !req.file) throw new Error('Missing input')
-    const data={...req.body}
-    if(req.file){
-      data.avatar = req.file.path
-    }
+  if (Object.keys(req.body).length === 0 && !req.file)
+    throw new Error("Missing input");
+  const data = { ...req.body };
+  if (req.file) {
+    data.avatar = req.file.path;
+  }
   const response = await User.findByIdAndUpdate(uid, data, { new: true });
   return res.status(200).json({
     success: response ? true : false,
@@ -235,5 +290,6 @@ module.exports = {
   resetPassword,
   uploadImageUser,
   updateUser,
-  getCurrent
+  getCurrent,
+  finalRegister
 };

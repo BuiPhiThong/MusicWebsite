@@ -10,12 +10,12 @@ const transporter = nodemailter.createTransport({
     },
 })
 
-const sendEmail = asynHandler(async ({email,html})=>{
+const sendEmail = asynHandler(async ({email,html,subject})=>{
     try {
      let info=   await transporter.sendMail({
             from:  '"Cuahangdientu" <no-relply@cuahangdientu.com>',
             to:email,
-            subject:"Forgot Password",
+            subject:subject,
             html:html
         })
      

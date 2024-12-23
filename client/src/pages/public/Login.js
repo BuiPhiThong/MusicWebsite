@@ -4,22 +4,28 @@ import authReducer, { fetchLogin } from "../../reducers/authSlice";
 import "./login.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
+import { apiRegister } from "../../apis/authen";
 function Login() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const { isRegister, isForgotPassword,isLogged, errorLogin, user, loading } = useSelector(
-    (state) => state.auth
-  );
+  const { isRegister, isForgotPassword, isLogged, errorLogin, user, loading } =
+    useSelector((state) => state.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loadingRegister, setLoadingRegister] = useState(false);
+  const [formRegister, setFormRegister] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+  });
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
       swal("Error", "Please enter both email and password", "error");
       return; // Nếu trống, không tiếp tục submit form
     }
-    
     dispatch(fetchLogin({ email: email, password: password }));
   };
 
@@ -36,11 +42,11 @@ function Login() {
   useEffect(() => {
     if (isLogged) {
       swal("Success", "Login successful!", "success");
-      navigate('/')
+      navigate("/");
     } else if (errorLogin) {
-      swal("Error", errorLogin.response.data.message,"error");
+      swal("Error", errorLogin?.response?.data?.message, "error");
     }
-  }, [isLogged, errorLogin,navigate]);
+  }, [isLogged, errorLogin, navigate]);
   // Hàm chuyển đổi giữa form đăng nhập và đăng ký
   const toggleForm = () => {
     dispatch(authReducer.actions.setRegister(!isRegister));
@@ -51,6 +57,43 @@ function Login() {
   const showForgotPassword = () => {
     dispatch(authReducer.actions.setForgotPassword(true));
     dispatch(authReducer.actions.setRegister(false)); // Nếu chuyển sang forgot password, phải reset đăng ký
+  };
+
+  const handleChangeRegister = (e) => {
+    const { name, value } = e.target;
+    const updatedForm = { ...formRegister };
+    updatedForm[name] = value;
+    setFormRegister(updatedForm);
+  };
+  const handleSubmitRegister = async (e) => {
+    e.preventDefault();
+    if (
+      !formRegister.firstname ||
+      !formRegister.lastname ||
+      !formRegister.email ||
+      !formRegister.password
+    ) {
+      swal({
+        title: "Thông báo",
+        text: "Vui lòng điền đầy đủ thông tin trước khi đăng ký!",
+        icon: "warning",
+        buttons: true, // Hiển thị nút đóng
+      });
+      return;
+    }
+    try {
+      await apiRegister(formRegister)
+      swal({
+        title: "Đăng ký thành công",
+        text: "Vui lòng kiểm tra email để hoàn tất xác thực!",
+        icon: "success",
+      });
+      
+    } catch (error) {
+      console.log(error);
+      
+      swal("Error", error?.response?.data?.mess || "Registration failed", "error");
+    }
   };
   return (
     <div className="container border p-5 my-5">
@@ -130,13 +173,15 @@ function Login() {
 
           {/* Form đăng ký */}
           {isRegister && (
-            <form>
+            <form onSubmit={handleSubmitRegister}>
               <div className="form-group mb-3">
                 <input
                   type="text"
                   className="form-control"
                   id="formName"
-                  placeholder="Name"
+                  placeholder="FirstName"
+                  name="firstname"
+                  onChange={handleChangeRegister}
                 />
               </div>
               <div className="form-group mb-3">
@@ -144,7 +189,9 @@ function Login() {
                   type="text"
                   className="form-control"
                   id="formUsername"
-                  placeholder="Username"
+                  placeholder="LastName"
+                  name="lastname"
+                  onChange={handleChangeRegister}
                 />
               </div>
               <div className="form-group mb-3">
@@ -153,6 +200,8 @@ function Login() {
                   className="form-control"
                   id="formEmail"
                   placeholder="Email"
+                  name="email"
+                  onChange={handleChangeRegister}
                 />
               </div>
               <div className="form-group mb-3">
@@ -161,9 +210,11 @@ function Login() {
                   className="form-control"
                   id="formPassword"
                   placeholder="Password"
+                  name="password"
+                  onChange={handleChangeRegister}
                 />
               </div>
-              <div className="form-check mb-4">
+              {/* <div className="form-check mb-4">
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -172,7 +223,7 @@ function Login() {
                 <label className="form-check-label" htmlFor="flexCheckDefault">
                   I have read and agree to the terms
                 </label>
-              </div>
+              </div> */}
               <button type="submit" className="btn btn-primary btn-block">
                 Sign up
               </button>
