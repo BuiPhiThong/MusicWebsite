@@ -6,12 +6,16 @@ const uploader = require('../config/cloudinary.config')
 
 router.post('/register',ctrls.register) 
 router.get('/finalregister/:token',ctrls.finalRegister) 
+
 router.post('/login',ctrls.login) 
 router.post('/refreshaccesstoken',ctrls.refreshToken) 
-router.get('/forgotpassword', ctrls.forgotPassword)
-router.put('/resetpassword', ctrls.resetPassword)
+
+router.post('/forgotpassword', ctrls.forgotPassword)
+router.put('/resetpassword/:token', ctrls.resetPassword)
+
 router.post('/logout',[verifyToken],ctrls.logout) 
 router.get('/',[verifyToken,isAdmin],ctrls.getAllUser) 
+
 router.get('/current',[verifyToken],ctrls.getCurrent) 
 
 // router.put('/uploadimage/:uid',[verifyToken,isAdmin],uploader.single('avatar'),ctrls.uploadImageUser)

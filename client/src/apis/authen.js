@@ -21,6 +21,18 @@ export const apiFinalRegister = (token) =>axios({
     method: 'get'
 })
 
+export const apiForgotPassword = (email)=>axios({
+    url:'/user/forgotpassword',
+    method:'post',
+    data:email
+})
+
+export const apiResetPassword = (token,password)=>axios({
+    url:`/user/resetpassword/${token}`,
+    method:'put',
+    data:{password}
+})
+
 export const apiGetCurrent = () =>axios({
     url:'/user/current',
     method:'get',

@@ -4,7 +4,7 @@ import authReducer, { fetchLogin } from "../../reducers/authSlice";
 import "./login.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
-import { apiRegister } from "../../apis/authen";
+import { apiForgotPassword, apiRegister } from "../../apis/authen";
 function Login() {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -20,6 +20,7 @@ function Login() {
     email: "",
     password: "",
   });
+  const [emailReset,setEmailReset]= useState('')
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -95,6 +96,32 @@ function Login() {
       swal("Error", error?.response?.data?.mess || "Registration failed", "error");
     }
   };
+  const handleSubmitResetPass = async (e)=>{
+    e.preventDefault()
+    console.log(emailReset);
+    
+    if(!emailReset){
+      swal({
+        title: "Thông báo",
+        text: "Vui lòng điền đầy đủ email để lấy mật khẩu!",
+        icon: "warning",
+      });
+      return;
+    }
+    try {
+      await apiForgotPassword({email:emailReset})
+      swal({
+        title: "Forgot thành công",
+        text: `Vui lòng kiểm tra email ${emailReset}  để hoàn tất đổi mật khẩu!`,
+        icon: "success",
+      });
+      setEmailReset('')
+    } catch (error) {
+      console.log(error);
+      
+      swal("Error", error || "ForgotPassword failed", "error");
+    }
+  }
   return (
     <div className="container border p-5 my-5">
       <div className="row justify-content-center">
@@ -156,13 +183,14 @@ function Login() {
 
           {/* Form Forgot Password */}
           {isForgotPassword && (
-            <form>
+            <form onSubmit={handleSubmitResetPass} method="post">
               <div className="form-group mb-3">
                 <input
                   type="email"
                   className="form-control"
                   id="formEmail"
                   placeholder="Enter your email"
+                  onChange={(e)=>setEmailReset(e.target.value)}
                 />
               </div>
               <button type="submit" className="btn btn-primary btn-block">

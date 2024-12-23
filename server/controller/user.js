@@ -27,7 +27,7 @@ const register = asynHandler(async (req, res) => {
     regisToken,
   });
 
-  const html = `To complete your registration, please click the link below. The link will expire in 15 minutes:
+  const html = `To complete your registration, please click the link below. The link will expire in 5 minutes:
     <a href="${process.env.URL_CLIENT}/finalregister/${regisToken}">Click here</a>`;
 
   await sendEmail({
@@ -102,9 +102,7 @@ const login = asynHandler(async (req, res) => {
       // Lưu refreshToken vào cookie
       res.cookie("refreshToken", refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Dùng HTTPS khi môi trường là production
-        sameSite: "Strict",
+        httpOnly: true
       });
 
       return res.status(200).json({
@@ -173,7 +171,7 @@ const logout = asynHandler(async (req, res) => {
 });
 
 const forgotPassword = asynHandler(async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.body;
   if (!email) throw new Error("Missing input!");
 
   const user = await User.findOne({ email });
@@ -181,7 +179,7 @@ const forgotPassword = asynHandler(async (req, res) => {
   const resetToken = user.createPasswordChangToken();
   await user.save();
   const html = `Để chuyển sang trang đổi mật khẩu, bạn cần click vào đổi mật khẩu. Link sẽ hết hạn sau 15 phút kể từ khi nhận được email:
-     <a href="${process.env.URL_SERVER}/api/user/reset-password/${resetToken}">Đổi mật khẩu</a>`;
+     <a href="${process.env.URL_CLIENT}/resetpassword/${resetToken}">Đổi mật khẩu</a>`;
   const object = {
     email,
     html,
@@ -195,18 +193,18 @@ const forgotPassword = asynHandler(async (req, res) => {
 });
 
 const resetPassword = asynHandler(async (req, res) => {
-  const { password, token } = req.body;
-  // console.log(password);
+  const { password } = req.body;
 
-  if (!password || !token) throw new Error("Missing input");
+  const {token} = req.params
+
 
   const checkToken = crypto.createHash("sha256").update(token).digest("hex");
 
+  //so sánh ở db và cái chuỗi mình mang theo từ mail xem có trùng hay hết hạn không
   const user = await User.findOne({
     passwordResetToken: checkToken,
     passwordResetExpire: { $gt: Date.now() },
   }).select("-refreshToken");
-  // console.log(user);
 
   user.password = password;
   (user.passwordResetToken = undefined),
