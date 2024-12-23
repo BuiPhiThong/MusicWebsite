@@ -5,12 +5,20 @@ import "./login.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
 import { apiForgotPassword, apiRegister } from "../../apis/authen";
+import { useForm } from "react-hook-form";
+
 function Login() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const { isRegister, isForgotPassword, isLogged, errorLogin, user, loading } =
     useSelector((state) => state.auth);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loadingRegister, setLoadingRegister] = useState(false);
@@ -20,8 +28,8 @@ function Login() {
     email: "",
     password: "",
   });
-  const [emailReset,setEmailReset]= useState('')
-  const handleSubmit = (e) => {
+  const [emailReset, setEmailReset] = useState("");
+  const handleSubmitLogin = (e) => {
     e.preventDefault();
     if (!email || !password) {
       swal("Error", "Please enter both email and password", "error");
@@ -60,47 +68,49 @@ function Login() {
     dispatch(authReducer.actions.setRegister(false)); // Nếu chuyển sang forgot password, phải reset đăng ký
   };
 
-  const handleChangeRegister = (e) => {
-    const { name, value } = e.target;
-    const updatedForm = { ...formRegister };
-    updatedForm[name] = value;
-    setFormRegister(updatedForm);
-  };
-  const handleSubmitRegister = async (e) => {
-    e.preventDefault();
-    if (
-      !formRegister.firstname ||
-      !formRegister.lastname ||
-      !formRegister.email ||
-      !formRegister.password
-    ) {
-      swal({
-        title: "Thông báo",
-        text: "Vui lòng điền đầy đủ thông tin trước khi đăng ký!",
-        icon: "warning",
-        buttons: true, // Hiển thị nút đóng
-      });
-      return;
-    }
+  // const handleChangeRegister = (e) => {
+  //   const { name, value } = e.target;
+  //   const updatedForm = { ...formRegister };
+  //   updatedForm[name] = value;
+  //   setFormRegister(updatedForm);
+  // };
+  const onSubmitRegister = async (data) => {
+    // e.preventDefault();
+    // if (
+    //   !formRegister.firstname ||
+    //   !formRegister.lastname ||
+    //   !formRegister.email ||
+    //   !formRegister.password
+    // ) {
+    //   swal({
+    //     title: "Thông báo",
+    //     text: "Vui lòng điền đầy đủ thông tin trước khi đăng ký!",
+    //     icon: "warning",
+    //   });
+    //   return;
+    // }
     try {
-      await apiRegister(formRegister)
+      await apiRegister(data);
       swal({
         title: "Đăng ký thành công",
         text: "Vui lòng kiểm tra email để hoàn tất xác thực!",
         icon: "success",
       });
-      
     } catch (error) {
       console.log(error);
-      
-      swal("Error", error?.response?.data?.mess || "Registration failed", "error");
+
+      swal(
+        "Oop!",
+        error?.response?.data?.mess || "Registration failed",
+        "error"
+      );
     }
   };
-  const handleSubmitResetPass = async (e)=>{
-    e.preventDefault()
+  const handleSubmitResetPass = async (e) => {
+    e.preventDefault();
     console.log(emailReset);
-    
-    if(!emailReset){
+
+    if (!emailReset) {
       swal({
         title: "Thông báo",
         text: "Vui lòng điền đầy đủ email để lấy mật khẩu!",
@@ -109,19 +119,19 @@ function Login() {
       return;
     }
     try {
-      await apiForgotPassword({email:emailReset})
+      await apiForgotPassword({ email: emailReset });
       swal({
         title: "Forgot thành công",
         text: `Vui lòng kiểm tra email ${emailReset}  để hoàn tất đổi mật khẩu!`,
         icon: "success",
       });
-      setEmailReset('')
+      setEmailReset("");
     } catch (error) {
       console.log(error);
-      
-      swal("Error", error || "ForgotPassword failed", "error");
+
+      swal("Error", error?.response?.data?.mess || "ForgotPassword failed", "error");
     }
-  }
+  };
   return (
     <div className="container border p-5 my-5">
       <div className="row justify-content-center">
@@ -138,7 +148,7 @@ function Login() {
 
           {/*Mặc định hiển thị form đăng nhập */}
           {!isRegister && !isForgotPassword && (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmitLogin}>
               <div className="form-group mb-3">
                 <input
                   type="email"
@@ -158,19 +168,7 @@ function Login() {
                 />
               </div>
               <div className="d-flex justify-content-between mx-4 mb-4">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="flexCheckDefault"
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="flexCheckDefault"
-                  >
-                    Remember me
-                  </label>
-                </div>
+                <div className="form-check"></div>
                 <a href="#" onClick={showForgotPassword}>
                   Forgot password?
                 </a>
@@ -190,7 +188,7 @@ function Login() {
                   className="form-control"
                   id="formEmail"
                   placeholder="Enter your email"
-                  onChange={(e)=>setEmailReset(e.target.value)}
+                  onChange={(e) => setEmailReset(e.target.value)}
                 />
               </div>
               <button type="submit" className="btn btn-primary btn-block">
@@ -201,46 +199,76 @@ function Login() {
 
           {/* Form đăng ký */}
           {isRegister && (
-            <form onSubmit={handleSubmitRegister}>
+            <form onSubmit={handleSubmit(onSubmitRegister)}>
               <div className="form-group mb-3">
                 <input
                   type="text"
                   className="form-control"
-                  id="formName"
-                  placeholder="FirstName"
-                  name="firstname"
-                  onChange={handleChangeRegister}
+                  placeholder="First Name"
+                  {...register("firstname", {
+                    required: "Họ là bắt buộc.",
+                  })}
                 />
+                {errors?.firstname && (
+                  <span className="text-danger">
+                    {errors?.firstname?.message}
+                  </span>
+                )}
               </div>
               <div className="form-group mb-3">
                 <input
                   type="text"
                   className="form-control"
-                  id="formUsername"
-                  placeholder="LastName"
-                  name="lastname"
-                  onChange={handleChangeRegister}
+                  placeholder="Last Name"
+                  {...register("lastname", {
+                    required: "Tên là bắt buộc.",
+                    pattern:{
+                      value:/^[A-Z][a-zA-Z]*$/,
+                      message:'Bắt đầu bằng chữ cái hoa'
+                    }
+                  })}
                 />
+                {errors.lastname && (
+                  <span className="text-danger">{errors.lastname.message}</span>
+                )}
               </div>
               <div className="form-group mb-3">
                 <input
                   type="email"
                   className="form-control"
-                  id="formEmail"
-                  placeholder="Email"
-                  name="email"
-                  onChange={handleChangeRegister}
+                  placeholder="Email address"
+                  {...register("email", {
+                    required: "Email là bắt buộc.",
+                    pattern: {
+                      value: /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Email không đúng định dạng.",
+                    },
+                  })}
                 />
+                {errors.email && (
+                  <span className="text-danger">{errors.email.message}</span>
+                )}
               </div>
               <div className="form-group mb-3">
                 <input
                   type="password"
                   className="form-control"
-                  id="formPassword"
                   placeholder="Password"
-                  name="password"
-                  onChange={handleChangeRegister}
+                  {...register("password", {
+                    required: "Mật khẩu là bắt buộc.",
+                    minLength: {
+                      value: 6,                    
+                      message: "Mật khẩu phải có ít nhất 6 ký tự.",
+                    },
+                    pattern:{
+                      value:/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/,
+                      message:"Mật khẩu cần có 1 chữ cái in hoa và 1 kí tự đặc biệt"
+                    }
+                  })}
                 />
+                {errors.password && (
+                  <span className="text-danger">{errors.password.message}</span>
+                )}
               </div>
               {/* <div className="form-check mb-4">
                 <input
