@@ -178,7 +178,7 @@ const forgotPassword = asynHandler(async (req, res) => {
   if (!user) throw new Error("Email has been not existed!");
   const resetToken = user.createPasswordChangToken();
   await user.save();
-  const html = `Để chuyển sang trang đổi mật khẩu, bạn cần click vào đổi mật khẩu. Link sẽ hết hạn sau 15 phút kể từ khi nhận được email:
+  const html = `Để chuyển sang trang đổi mật khẩu, bạn cần click vào đổi mật khẩu. Link sẽ hết hạn sau 5 phút kể từ khi nhận được email:
      <a href="${process.env.URL_CLIENT}/resetpassword/${resetToken}">Đổi mật khẩu</a>`;
   const object = {
     email,
