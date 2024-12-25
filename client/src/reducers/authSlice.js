@@ -70,12 +70,20 @@ const authReducer = createSlice({
       state.isLogged = false;
       state.accessToken = null;
       state.user = null;
-    }
-    ,
+    },
     updateAccessToken:(state,action)=>{
       state.accessToken=action.payload
       state.isLogged = true;
-      console.log('update accesstoken vao localstorage:',action.payload);
+      let localStorageData = window.localStorage.getItem("persist:root");
+        if (localStorageData && typeof localStorageData === "string") {
+          localStorageData = JSON.parse(localStorageData);
+          const newAuthData = {
+            ...JSON.parse(localStorageData.auth),
+            accessToken: action.payload,
+          };
+          localStorageData.auth = JSON.stringify(newAuthData);
+          window.localStorage.setItem("persist:root", JSON.stringify(localStorageData));
+        }
     }
   },
   extraReducers: (builder) => {

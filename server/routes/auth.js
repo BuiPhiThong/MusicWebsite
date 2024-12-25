@@ -22,4 +22,26 @@ router.get("/google/callback",(req,res,next)=>{
 
 });
 
+
+router.get("/facebook",passport.authenticate("facebook", { scope: ["email", "public_profile"]  ,session:false}));
+
+router.get("/facebook/callback",(req,res,next)=>{
+  passport.authenticate("facebook",(err,infoUser)=>{
+      req.user = infoUser
+      next()
+  })(req,res,next)
+
+},(req,res)=>{
+  const {accessToken,userData,refreshToken}= req.user
+  res.cookie("refreshToken", refreshToken, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  });
+  res.redirect(`${process.env.URL_CLIENT}/login?accessToken=${accessToken}`);
+  // res.status(200).json({
+  //   message: "Login successful",
+  //   accessToken
+  // });
+
+});
 module.exports = router;

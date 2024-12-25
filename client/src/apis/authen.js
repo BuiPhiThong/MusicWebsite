@@ -5,10 +5,6 @@ export const apiLogin = (credentials) =>axios({
     method:'post',
     data:credentials
 })
-export const apiInfoGoogle = ()=>axios({
-    url:'/auth/google/callback',
-    method:'get'
-})
 export const apiRefreshToken = () =>axios({
     url:'/user/refreshaccesstoken',
     method:'post'

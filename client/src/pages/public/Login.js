@@ -123,6 +123,9 @@ function Login() {
   const handleLoginGoogle = async ()=>{
       window.location.href = "http://localhost:5000/api/auth/google";
   }
+  const handleLoginFacebook = async ()=>{
+    window.location.href = "http://localhost:5000/api/auth/facebook";
+}
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get("accessToken");
@@ -130,7 +133,7 @@ function Login() {
       dispatch(authReducer.actions.updateAccessToken(token));
       navigate("/");
     }
-  }, [location, navigate, dispatch]); // Dependencies include location, navigate, and dispatch
+  }, [location, navigate, dispatch]); 
   return (
     <div className="container border p-5 my-5">
       <div className="row justify-content-center">
@@ -288,7 +291,7 @@ function Login() {
           {/* Các nút mạng xã hội */}
           <div className="text-center mt-4">
             <div className="d-flex justify-content-center">
-              <button  className="btn btn-primary m-1">
+              <button  className="btn btn-primary m-1" onClick={()=>handleLoginFacebook()}>
                 FB
               </button>
               <button  className="btn btn-danger m-1" onClick={()=>handleLoginGoogle()}>
