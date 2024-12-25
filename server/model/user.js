@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "VipAccount",
     },
+    typeLogin:{
+      type:String,
+      default:"local"
+    },
     deleted: {
       type: Number,
       default: 0,

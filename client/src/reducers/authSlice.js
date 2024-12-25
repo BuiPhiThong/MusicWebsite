@@ -10,10 +10,10 @@ export const fetchLogin = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(error);
+      
     }
   }
 );
-
 export const fetchCurrent = createAsyncThunk(
   "auth/current",
   async (_, { rejectWithValue }) => {
@@ -74,8 +74,8 @@ const authReducer = createSlice({
     ,
     updateAccessToken:(state,action)=>{
       state.accessToken=action.payload
+      state.isLogged = true;
       console.log('update accesstoken vao localstorage:',action.payload);
-      
     }
   },
   extraReducers: (builder) => {

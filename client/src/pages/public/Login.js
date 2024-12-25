@@ -4,16 +4,17 @@ import authReducer, { fetchLogin } from "../../reducers/authSlice";
 import "./login.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
-import { apiForgotPassword, apiRegister } from "../../apis/authen";
+import { apiForgotPassword, apiLoginGoogle, apiRegister } from "../../apis/authen";
 import { useForm } from "react-hook-form";
 
 function Login() {
   const dispatch = useDispatch();
   const location = useLocation();
+  
   const navigate = useNavigate();
   const { isRegister, isForgotPassword, isLogged, errorLogin, user, loading } =
     useSelector((state) => state.auth);
-
+    
   const {
     register,
     handleSubmit,
@@ -35,9 +36,9 @@ function Login() {
       swal("Error", "Please enter both email and password", "error");
       return; // Nếu trống, không tiếp tục submit form
     }
-    dispatch(fetchLogin({ email: email, password: password }));
+    dispatch(fetchLogin({ email: email, password: password }));      
+    
   };
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("isRegister") === "true") {
@@ -46,13 +47,13 @@ function Login() {
       dispatch(authReducer.actions.setRegister(false)); // Nếu không, bật form đăng nhập
     }
   }, [location.search, dispatch]);
-
+  
   // Hiển thị thông báo khi login thành công hoặc thất bại
   useEffect(() => {
     if (isLogged) {
       swal("Success", "Login successful!", "success");
       navigate("/");
-    } else if (errorLogin) {
+    } else if (errorLogin) {      
       swal("Error", errorLogin?.response?.data?.message, "error");
     }
   }, [isLogged, errorLogin, navigate]);
@@ -67,71 +68,69 @@ function Login() {
     dispatch(authReducer.actions.setForgotPassword(true));
     dispatch(authReducer.actions.setRegister(false)); // Nếu chuyển sang forgot password, phải reset đăng ký
   };
-
+  
   // const handleChangeRegister = (e) => {
-  //   const { name, value } = e.target;
-  //   const updatedForm = { ...formRegister };
-  //   updatedForm[name] = value;
-  //   setFormRegister(updatedForm);
-  // };
-  const onSubmitRegister = async (data) => {
-    // e.preventDefault();
-    // if (
-    //   !formRegister.firstname ||
-    //   !formRegister.lastname ||
-    //   !formRegister.email ||
-    //   !formRegister.password
-    // ) {
-    //   swal({
-    //     title: "Thông báo",
-    //     text: "Vui lòng điền đầy đủ thông tin trước khi đăng ký!",
-    //     icon: "warning",
-    //   });
-    //   return;
-    // }
-    try {
-      await apiRegister(data);
-      swal({
-        title: "Đăng ký thành công",
-        text: "Vui lòng kiểm tra email để hoàn tất xác thực!",
-        icon: "success",
-      });
-    } catch (error) {
-      console.log(error);
-
-      swal(
-        "Oop!",
-        error?.response?.data?.mess || "Registration failed",
-        "error"
-      );
-    }
-  };
-  const handleSubmitResetPass = async (e) => {
-    e.preventDefault();
-    console.log(emailReset);
-
-    if (!emailReset) {
-      swal({
-        title: "Thông báo",
-        text: "Vui lòng điền đầy đủ email để lấy mật khẩu!",
-        icon: "warning",
-      });
-      return;
-    }
-    try {
-      await apiForgotPassword({ email: emailReset });
-      swal({
-        title: "Forgot thành công",
-        text: `Vui lòng kiểm tra email ${emailReset}  để hoàn tất đổi mật khẩu!`,
+    //   const { name, value } = e.target;
+    //   const updatedForm = { ...formRegister };
+    //   updatedForm[name] = value;
+    //   setFormRegister(updatedForm);
+    // };
+    const onSubmitRegister = async (data) => {
+      try {
+        await apiRegister(data);
+        swal({
+          title: "Đăng ký thành công",
+          text: "Vui lòng kiểm tra email để hoàn tất xác thực!",
+          icon: "success",
+        });
+      } catch (error) {
+        console.log(error);
+        
+        swal(
+          "Oop!",
+          error?.response?.data?.mess || "Registration failed",
+          "error"
+        );
+      }
+    };
+    const handleSubmitResetPass = async (e) => {
+      e.preventDefault();
+      console.log(emailReset);
+      
+      if (!emailReset) {
+        swal({
+          title: "Thông báo",
+          text: "Vui lòng điền đầy đủ email để lấy mật khẩu!",
+          icon: "warning",
+        });
+        return;
+      }
+      try {
+        await apiForgotPassword({ email: emailReset });
+        swal({
+          title: "Forgot thành công",
+          text: `Vui lòng kiểm tra email ${emailReset}  để hoàn tất đổi mật khẩu!`,
         icon: "success",
       });
       setEmailReset("");
     } catch (error) {
       console.log(error);
-
+      
       swal("Error", error?.response?.data?.mess || "ForgotPassword failed", "error");
     }
   };
+  
+  const handleLoginGoogle = async ()=>{
+      window.location.href = "http://localhost:5000/api/auth/google";
+  }
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get("accessToken");
+    if (token) {
+      dispatch(authReducer.actions.updateAccessToken(token));
+      navigate("/");
+    }
+  }, [location, navigate, dispatch]); // Dependencies include location, navigate, and dispatch
   return (
     <div className="container border p-5 my-5">
       <div className="row justify-content-center">
@@ -289,12 +288,12 @@ function Login() {
           {/* Các nút mạng xã hội */}
           <div className="text-center mt-4">
             <div className="d-flex justify-content-center">
-              <a href="#" className="btn btn-primary m-1">
+              <button  className="btn btn-primary m-1">
                 FB
-              </a>
-              <a href="#" className="btn btn-danger m-1">
+              </button>
+              <button  className="btn btn-danger m-1" onClick={()=>handleLoginGoogle()}>
                 GG
-              </a>
+              </button>
             </div>
           </div>
           {/* Nút chuyển đổi giữa đăng nhập và đăng ký */}

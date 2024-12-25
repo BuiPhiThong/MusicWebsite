@@ -4,6 +4,7 @@ const dbConnect = require('./config/dbconnect')
  const initRoutes = require('./routes/index')
  const cookieParser = require('cookie-parser')
 const cors = require('cors')
+require('./passport')
 
 const app = express();
 
