@@ -28,7 +28,6 @@ const searchHome = asynHandler(async (req, res) => {
       }).select("_id"); // Chỉ lấy trường _id của ca sĩ
 
       const singerIds = singers.map((singer) => singer._id); // Lấy danh sách _id của các ca sĩ
-      console.log(singerIds);
 
       // Tìm các bài hát có singerId nằm trong danh sách các ca sĩ đã tìm được
       const dataSongAll = await Song.find({
@@ -121,9 +120,7 @@ const searchHome1 = asynHandler(async (req, res) => {
       singerName: songSearch,
       deleted: 0,
     }).select("_id");
-    const singerIds = singer.map((el) => el._id);
-    console.log(singerIds);
-    
+    const singerIds = singer.map((el) => el._id);    
     if (queries.song) {
       dataSongSearch = await Song.find({
         $or: [{ songName: songSearch }, { singerId: { $in: singerIds } }],

@@ -4,7 +4,7 @@ import {  Content } from '../../components'
 
 const Home = () => {
   return (
-    <div className='container'>
+    <div>
       <Slider/>
       <Content/>
     </div>

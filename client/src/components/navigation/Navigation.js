@@ -11,9 +11,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDataPopupSearch } from "../../reducers/popupSearchSlice";
 import { IoIosMusicalNotes } from "react-icons/io";
-import authReducer, { fetchCurrent, refreshAccessToken } from "../../reducers/authSlice";
+import { BsMoon, BsMoonFill } from "react-icons/bs";
+import authReducer, {
+  fetchCurrent,
+  refreshAccessToken,
+} from "../../reducers/authSlice";
 import axios from "axios";
 import { isTokenExpired } from "../../ultils/helper"; // Import hàm kiểm tra token
+import themeReducer from "../../reducers/themeSlice";
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -29,10 +34,13 @@ const Navigation = () => {
 
   // Lấy dữ liệu tìm kiếm từ Redux store
   const { dataPopup, loadingPopup } = useSelector((state) => state.popupSearch);
-  const { isLogged, user ,errorCurrent,accessToken} = useSelector((state) => state.auth);
-  useEffect(()=>{
-    if(isLogged && accessToken) dispatch(fetchCurrent())
-  },[dispatch,isLogged,accessToken])
+  const { isLogged, user, errorCurrent, accessToken } = useSelector(
+    (state) => state.auth
+  );
+  const { isDarkMode } = useSelector((state) => state.theme);
+  useEffect(() => {
+    if (isLogged && accessToken) dispatch(fetchCurrent());
+  }, [dispatch, isLogged, accessToken]);
 
   // Lấy lịch sử tìm kiếm từ localStorage khi component mount
   useEffect(() => {
@@ -133,14 +141,13 @@ const Navigation = () => {
 
   const dropdownRef = useRef(null);
   const toggleDropdown = () => {
-    setIsDropdownOpen(prev => !prev); // Toggle dropdown
+    setIsDropdownOpen((prev) => !prev); // Toggle dropdown
   };
-  
+
   const handleLogout = () => {
     dispatch(authReducer.actions.setLogout()); // Gọi action setLogout
     setIsDropdownOpen(false); // Đóng dropdown khi logout
-    localStorage.removeItem('persist:root'); // Xóa dữ liệu persisted trong localStorage
-
+    localStorage.removeItem("persist:root"); // Xóa dữ liệu persisted trong localStorage
   };
 
   useEffect(() => {
@@ -156,8 +163,6 @@ const Navigation = () => {
     };
   }, []);
 
-
-  
   useEffect(() => {
     const checkToken = async () => {
       if (accessToken && isTokenExpired(accessToken)) {
@@ -169,13 +174,12 @@ const Navigation = () => {
         }
       }
     };
-  
+
     // Kiểm tra và refresh token khi component mount
     if (accessToken) {
       checkToken();
     }
   }, [dispatch, accessToken]); // Phụ thuộc vào accessToken để kiểm tra lại khi token thay đổi
-  
 
   return (
     <div className="row align-items-center pt-3">
@@ -376,7 +380,15 @@ const Navigation = () => {
                         Xin chào, {user?.lastname || "Người dùng"}!
                       </span>
                       <button className="dropdown-item">
-                       Thông tin tài khoản
+                        Thông tin tài khoản
+                      </button>
+                      <button className="dropdown-item" onClick={()=>dispatch(themeReducer.actions.toggleDarkMode())}>
+                        {isDarkMode ? (<>Dark Mode <BsMoonFill className="my-2" /></>
+                        ) : (
+                          <>
+                            Dark Mode <BsMoon />
+                          </>
+                        )}
                       </button>
                       <button className="dropdown-item" onClick={handleLogout}>
                         Đăng xuất

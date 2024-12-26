@@ -6,7 +6,11 @@
 .app {
     font-family: 'Poppins', sans-serif;
 }
-
+/* Chế độ tối */
+.app.dark-mode {
+    background-color: #000000d8;
+    color: #ffffff;
+  }
 body {
     max-width: 1520px;
     margin: 0 auto;

@@ -1,106 +1,70 @@
 import React from "react";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import "./slider.css";
 
 const Slider = () => {
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
+
+  const slides = [
+    {
+      image:
+        "https://image.tienphong.vn/600x315/Uploaded/2024/mdf-vowsxr/2024_07_03/anh-trai-say-hi-duong-domic-ava-6661.jpg",
+      title: "Mất Kết Nối-Dương Quá",
+      description: "Exploring modern music trends.",
+    },
+    {
+      image:
+        "https://avatar-ex-swe.nixcdn.com/slideshow/2024/11/26/a/5/b/f/1732591454167_org.jpg",
+      title: "Rap Việt",
+      description: "Bản thu tập 10 đã chính thức phát hành.",
+    },
+    {
+      image:"https://images.kienthuc.net.vn/zoom/800/Uploaded/quocquan/2024_06_03/so_tung_RSVV.jpg",
+      title: "Đừng Làm Trái Tim Anh Đau",
+      description: "Sơn Tùng M-TP",
+    },
+  ];
+
   return (
-    <div className="border mt-4">
-      <div
-        id="customSlider"
-        className="carousel slide"
-        data-bs-ride="carousel"
+    <div className="slider-container mt-4">
+      <Carousel
+        responsive={responsive}
+        infinite
+        autoPlay
+        autoPlaySpeed={5000}
+        keyBoardControl
+        showDots
+        containerClass="carousel-container"
+        itemClass="carousel-item-padding-40-px"
       >
-        {/* Indicators */}
-        <div className="carousel-indicators">
-          <button
-            type="button"
-            data-bs-target="#customSlider"
-            data-bs-slide-to="0"
-            className="active"
-            aria-current="true"
-            aria-label="Slide 1"
-          ></button>
-          <button
-            type="button"
-            data-bs-target="#customSlider"
-            data-bs-slide-to="1"
-            aria-label="Slide 2"
-          ></button>
-          <button
-            type="button"
-            data-bs-target="#customSlider"
-            data-bs-slide-to="2"
-            aria-label="Slide 3"
-          ></button>
-        </div>
-
-        {/* Slides */}
-        <div className="carousel-inner">
-          {/* Slide 1 */}
-          <div className="carousel-item active">
+        {slides.map((slide, index) => (
+          <div key={index} className="custom-slide">
             <img
-              src="https://avatar-ex-swe.nixcdn.com/slideshow/2024/11/26/a/5/b/f/1732591658122_org.jpg"
-              className="d-block w-100 custom-slide-image"
-              alt="Slide 1"
+              src={slide.image}
+              alt={slide.title}
+              className="custom-slide-image"
             />
-            <div className="carousel-caption d-none d-md-block">
-              <h5>Gen Gì Gen</h5>
-              <p>Exploring modern music trends.</p>
+            <div className="custom-slide-content">
+              <h5>{slide.title}</h5>
+              <p>{slide.description}</p>
             </div>
           </div>
-
-          {/* Slide 2 */}
-          <div className="carousel-item">
-            <img
-              src="https://avatar-ex-swe.nixcdn.com/slideshow/2024/11/26/a/5/b/f/1732591454167_org.jpg"
-              className="d-block w-100 custom-slide-image"
-              alt="Slide 2"
-            />
-            <div className="carousel-caption d-none d-md-block">
-              <h5>Rap Việt</h5>
-              <p>Bản thu tập 10 đã chính thức phát hành.</p>
-            </div>
-          </div>
-
-          {/* Slide 3 */}
-          <div className="carousel-item">
-            <img
-              src="https://avatar-ex-swe.nixcdn.com/slideshow/2024/11/25/4/f/b/8/1732509835346_org.jpg"
-              className="d-block w-100 custom-slide-image"
-              alt="Slide 3"
-            />
-            <div className="carousel-caption d-none d-md-block">
-              <h5>Nhắm Mắt, Bật Nhạc, Tắt Phone</h5>
-              <p>Hồ Ngọc Hà</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#customSlider"
-          data-bs-slide="prev"
-        >
-          <span
-            className="carousel-control-prev-icon"
-            aria-hidden="true"
-          ></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#customSlider"
-          data-bs-slide="next"
-        >
-          <span
-            className="carousel-control-next-icon"
-            aria-hidden="true"
-          ></span>
-          <span className="visually-hidden">Next</span>
-        </button>
-      </div>
+        ))}
+      </Carousel>
     </div>
   );
 };

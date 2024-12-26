@@ -4,9 +4,11 @@ import path from './ultils/path';
 import { ListenPlaylist, SearchHome } from './components';
 import FinalRegister from './pages/user/FinalRegister';
 import ResetPassword from './pages/user/ResetPassword';
+import { useSelector } from 'react-redux';
 function App() {
+  const { isDarkMode } = useSelector((state) => state.theme);
   return (
-    <div className="app">
+    <div className={`app ${isDarkMode ?"dark-mode" : ''}`}>
       <Routes>
           <Route path={path.PUBLIC} element={<Public/>}>
               <Route path={path.HOME} element={<Home/>}/>

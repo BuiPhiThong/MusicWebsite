@@ -11,12 +11,13 @@ import dataSearchReducer from "../reducers/dataSearchSlice";
 import listenPlaylistReducer from "../reducers/listenPlaylistSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Local storage
+import themeReducer from "../reducers/themeSlice";
 
 // Cấu hình redux-persist
 const persistConfig = {
   key: "root",
   storage, // Lưu trữ bằng localStorage
-  whitelist: ["auth"], // Chỉ lưu reducer auth (có thể thêm các reducer khác nếu cần)
+  whitelist: ["auth","theme"], // Chỉ lưu reducer auth (có thể thêm các reducer khác nếu cần)
   transforms: [
     // Chỉ lưu các giá trị cần thiết trong auth
     {
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   popupSearch: popupSearchReducer.reducer,
   dataSearch: dataSearchReducer.reducer,
   listenPlaylist: listenPlaylistReducer.reducer,
+  theme:themeReducer.reducer
 });
 
 // Áp dụng persistReducer cho rootReducer
