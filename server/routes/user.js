@@ -21,7 +21,7 @@ router.get('/current',[verifyToken],ctrls.getCurrent)
 // router.put('/uploadimage/:uid',[verifyToken,isAdmin],uploader.single('avatar'),ctrls.uploadImageUser)
 
 router.put('/:uid',[uploader.single('avatar')] ,ctrls.updateUser)
-router.post('/createwislist',[verifyToken],ctrls.createWishlist)
+router.post('/createwislist/:sid',[verifyToken],ctrls.createWishlist)
 router.put('/updatewishlist/:sid',[verifyToken],ctrls.updateWishlist)
 
 

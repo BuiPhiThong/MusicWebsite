@@ -281,12 +281,13 @@ const getCurrent = asynHandler(async (req, res) => {
 
 const createWishlist = asynHandler(async (req, res) => {
   const { _id } = req.user;
-  const { name, songs} = req.body;
-
-  if (!name || !songs) {
+  const {sid}= req.params
+  const { name, displayMode} = req.body;
+  console.log(name ,displayMode ,sid);
+  
+  if (!name || !sid || !displayMode) {
     throw new Error('Missing input to create wishlist!');
   }
-
   const user = await User.findById(_id);
   if (!user) {
     return res.status(404).json({ success: false, mess: 'User not found!' });
@@ -295,7 +296,7 @@ const createWishlist = asynHandler(async (req, res) => {
   if (isDuplicate) {
     throw new Error('Wishlist name must be unique!');
   }
-  user.wishlist.push({ name, songs});
+  user.wishlist.push({ name:name, songs:sid,displayMode:displayMode});
   await user.save();
 
   return res.status(200).json({ success: true, mess: 'Create successfully!' });

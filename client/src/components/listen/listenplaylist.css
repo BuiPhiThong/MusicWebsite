@@ -383,4 +383,63 @@
     }
   }
   
+  .popup.new-playlist-popup {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: left; /* Căn text sang trái */
+    animation: fadeIn 0.3s ease; /* Hiệu ứng xuất hiện mượt */
+  }
+  
+  .popup.new-playlist-popup h4 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .popup.new-playlist-popup .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .popup.new-playlist-popup .form-group label {
+    width: 30%; /* Chiều rộng cố định cho label */
+    margin: 0; /* Xóa khoảng cách mặc định */
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .popup.new-playlist-popup .form-group input,
+  .popup.new-playlist-popup .form-group select {
+    width: 70%; /* Input/Select chiếm phần còn lại */
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .popup.new-playlist-popup button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease;
+  }
+  
+  .popup.new-playlist-popup button:hover {
+    background: #0056b3;
+  }
+  
   

@@ -1,31 +1,43 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navigation from "../navigation/Navigation";
-import { FaCirclePlay, FaPause, FaRepeat } from "react-icons/fa6";
+import { FaCirclePlay, FaPause } from "react-icons/fa6";
 import { BsDownload } from "react-icons/bs";
 import { MdAddCircleOutline } from "react-icons/md";
 import { IoIosMore, IoMdClose, IoMdAdd } from "react-icons/io";
 import { LuExternalLink } from "react-icons/lu";
 import { RiHeartAddLine } from "react-icons/ri";
 import { FaVolumeUp } from "react-icons/fa";
-import { Modal, Button } from "react-bootstrap"; // Import Modal từ react-bootstrap
 import "./listenplaylist.css";
 import { useParams } from "react-router-dom";
-import { apiGetListenSong } from "../../apis/listen";
 import { useDispatch, useSelector } from "react-redux";
 import listenPlaylistReducer, {
   fetchDataListenPlaylist,
 } from "../../reducers/listenPlaylistSlice";
-import { fetchCurrent, fetchCurrentPlaylist } from "../../reducers/actionUser";
-import { apiWishList } from "../../apis/user";
-import { toast } from 'react-toastify'; // Import toast từ react-toastify
+import { fetchCurrentPlaylist } from "../../reducers/actionUser";
+import { apiCreateWishList, apiUpandReWishList } from "../../apis/user";
+import { toast } from "react-toastify"; // Import toast từ react-toastify
+import { useForm } from "react-hook-form";
+
 const ListenPlaylist = () => {
   const dispatch = useDispatch();
   const audioRef = useRef(null);
   const [isPopupVisible, setPopupVisible] = useState(false);
+  const [isNewPlaylistPopupVisible, setNewPlaylistPopupVisible] =
+    useState(false);
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [currentSelectedSong, setCurrentSelectedSong] = useState(null); // Lưu bài hát hiện tại
-
+  const [formAddplaylist, setFormAddPlaylist] = useState({
+    name: "",
+    displayMode: "",
+  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
   const popupRef = useRef(null); // Tạo ref để tham chiếu đến popup
+
   const {
     isPlaying,
     songProgress,
@@ -49,7 +61,7 @@ const ListenPlaylist = () => {
     if (isLogged) {
       dispatch(fetchCurrentPlaylist());
     }
-  }, [dispatch, isLogged]);
+  }, [dispatch, isLogged,profile]);
 
   const currentSong = playlistData?.songs?.[currentSongIndex];
 
@@ -136,12 +148,12 @@ const ListenPlaylist = () => {
   const handleHeartClick = (idSong) => {
     setPopupVisible(true); // Hiển thị pop-up
     // console.log(idSong);
-    setCurrentSelectedSong(idSong)
-    const matchedPlaylists= profile?.wishlist?.filter((el)=>{
-      const existed = el?.songs.some((item)=>item.toString()===idSong)
-      return existed
-    })
-    setSelectedPlaylists(matchedPlaylists?.map(el=>el?._id))
+    setCurrentSelectedSong(idSong);
+    const matchedPlaylists = profile?.wishlist?.filter((el) => {
+      const existed = el?.songs.some((item) => item.toString() === idSong);
+      return existed;
+    });
+    setSelectedPlaylists(matchedPlaylists?.map((el) => el?._id));
   };
 
   const closePopup = () => {
@@ -163,39 +175,67 @@ const ListenPlaylist = () => {
     };
   }, [isPopupVisible]);
 
-  const handleCheckboxSelected = async (plid,pln) => {
-    try {    
+  const handleCheckboxSelected = async (plid, pln) => {
+    try {
       // Kiểm tra nếu playlist đã được chọn
-      
-  
+
       // Gọi API
-      const response = await apiWishList(currentSelectedSong, plid);
-      
+      const response = await apiUpandReWishList(currentSelectedSong, plid);
+
       if (response?.success) {
         {
-          response?.isRemoved ? toast.success(`Remove from ${pln}`,{icon: "🚀"}):toast.success(`Added to ${pln}`,{icon: "🚀"})  
+          response?.isRemoved
+            ? toast.success(`Remove from ${pln}`, { icon: "🚀" })
+            : toast.success(`Added to ${pln}`, { icon: "🚀" });
         }
-       
-        const updatedData = response.mess
-        setSelectedPlaylists((prev)=>{
-          const isSelectedCurrent= updatedData.songs.includes(currentSelectedSong)
-          if(isSelectedCurrent){
-            return [...prev,plid]            
+        const updatedData = response.mess;
+        setSelectedPlaylists((prev) => {
+          const isSelectedCurrent =
+            updatedData.songs.includes(currentSelectedSong);
+          if (isSelectedCurrent) {
+            return [...prev, plid];
           }
-          
-          return prev.filter((idprev)=>idprev!==plid)
-        })
+
+          return prev.filter((idprev) => idprev !== plid);
+        });
         console.log(selectedPlaylists);
-                
-       }else{
-        toast.success(`Updated Failed`,{icon: "🚀"})
-       }
-      
+      } else {
+        toast.success(`Updated Failed`, { icon: "🚀" });
+      }
     } catch (error) {
       console.error("Error updating playlist:", error);
     }
   };
-  
+
+  const openNewPlaylistPopup = () => {
+    setNewPlaylistPopupVisible(true); // Hiển thị pop-up
+  };
+
+  const closeNewPlaylistPopup = () => {
+    setNewPlaylistPopupVisible(false); // Đóng pop-up
+    setFormAddPlaylist({
+      name: "",
+      displayMode: "",
+    });
+    reset(); 
+  };
+  const handleAddplaylist = async(data) => {
+    
+    const displayMode=data.displayMode==='0' ?'Public':data.displayMode==='1' ?'Private':''
+    const dataUpdate={...data,displayMode:displayMode}
+    
+    try {
+      const response = await  apiCreateWishList(currentSelectedSong,dataUpdate)
+
+      if(response?.success){
+        toast.success(`Add to ${data.name}`, { icon: "🚀" })
+        closeNewPlaylistPopup()
+      }
+    } catch (error) {
+      toast.error(`Add to ${data.name} failed` , { icon: "🚀" })
+    }
+    reset();
+  };
   return (
     <div className="container">
       <Navigation />
@@ -277,13 +317,23 @@ const ListenPlaylist = () => {
                   <div className="popup-overlay">
                     <div className="popup" ref={popupRef}>
                       <h4>Lưu vào!</h4>
-                      {profile?.wishlist?.map((el,index) => (
+                      {profile?.wishlist?.map((el, index) => (
                         <div key={index}>
-                          <input type="checkbox" className="mx-3" checked={selectedPlaylists.includes(el?._id)} onChange={()=>handleCheckboxSelected(el._id,el.name)} />
+                          <input
+                            type="checkbox"
+                            className="mx-3"
+                            checked={selectedPlaylists.includes(el?._id)}
+                            onChange={() =>
+                              handleCheckboxSelected(el._id, el.name)
+                            }
+                          />
                           <label>{el?.name}</label>
                         </div>
                       ))}
-                      <button className="rounded-pill">
+                      <button
+                        className="rounded-pill"
+                        onClick={openNewPlaylistPopup}
+                      >
                         <IoMdAdd className="mb-1 fs-4" />
                         Danh sách phát mới
                       </button>
@@ -298,6 +348,71 @@ const ListenPlaylist = () => {
                     </div>
                   </div>
                 ))}
+              {isNewPlaylistPopupVisible && (
+                <div className="popup-overlay">
+                  <div className="popup new-playlist-popup">
+                    <h4>Tạo danh sách phát mới</h4>
+
+                    <form
+                      onSubmit={handleSubmit(handleAddplaylist)}
+                      method="post"
+                    >
+                      <div className="form-group">
+                        <label htmlFor="playlistName" className="form-label">
+                          Name
+                        </label>
+                        <input
+                          id="playlistName"
+                          type="text"
+                          placeholder="Nhập tên danh sách phát"
+                          className="form-control"
+                          {...register("name", {
+                            required: "Name là bắt buộc",
+                          })}
+                        />
+                        
+                      </div>
+                      {errors.name && (
+                          <div className="text-danger fs-6 justify-content-end">{errors.name.message}</div>
+                        )}
+                      <div className="form-group">
+                        <label htmlFor="playlistPrivacy" className="form-label">
+                          Visibility:
+                        </label>
+                        <select
+                          id="playlistPrivacy"
+                          className="form-control"
+                          {...register("displayMode", {
+                            required: "Chọn quyền riêng tư",
+                          })}
+                        >
+                          <option value="0">Public</option>
+                          <option value="1">Private</option>
+                        </select>
+                        {errors.displayMode && (
+                          <span className="text-danger">
+                            {errors.displayMode.message}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Nút Hủy và Tạo */}
+                      <div className="d-flex justify-content-end">
+                        <button
+                          type="button"
+                          className="rounded-pill me-2"
+                          onClick={closeNewPlaylistPopup}
+                        >
+                          Hủy
+                        </button>
+                        <button type="submit" className="rounded-pill">
+                          Tạo
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -305,7 +420,6 @@ const ListenPlaylist = () => {
           <div className="lyric">Lyric</div>
         </div>
       </div>
-
 
       {showMusicPlayer && (
         <div className="music-modal">

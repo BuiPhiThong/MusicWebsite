@@ -18,7 +18,6 @@ root.render(
         <ToastContainer 
           position="bottom-left"
           autoClose={3000} // Thời gian đóng tự động
-          pauseOnHover
         />
       </BrowserRouter>
       </PersistGate>
