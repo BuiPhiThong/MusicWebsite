@@ -78,6 +78,7 @@
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.3s, padding 0.2s;
+  color: black;
 }
 
 /* Căn chỉnh cho từ khóa tìm kiếm */
@@ -87,7 +88,7 @@
 
 /* Hover cho các mục trong lịch sử */
 .history-item:hover {
-  background-color: #f0f0f0;
+  background-color: #c32525;
   padding-left: 15px; /* Thêm padding khi hover để tạo hiệu ứng */
 }
 

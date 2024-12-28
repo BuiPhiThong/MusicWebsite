@@ -7,6 +7,7 @@ const { genAccessToken, genRefreshToken } = require("../middlewares/jwt");
 const { sendEmail } = require("../ultils/sendMail");
 const crypto = require("crypto");
 const uniquid = require("uniqid");
+const { log } = require("console");
 
 const register = asynHandler(async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -278,6 +279,61 @@ const getCurrent = asynHandler(async (req, res) => {
   });
 });
 
+const createWishlist = asynHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { name, songs} = req.body;
+
+  if (!name || !songs) {
+    throw new Error('Missing input to create wishlist!');
+  }
+
+  const user = await User.findById(_id);
+  if (!user) {
+    return res.status(404).json({ success: false, mess: 'User not found!' });
+  }
+  const isDuplicate = user.wishlist.some((item) => item.name === name);
+  if (isDuplicate) {
+    throw new Error('Wishlist name must be unique!');
+  }
+  user.wishlist.push({ name, songs});
+  await user.save();
+
+  return res.status(200).json({ success: true, mess: 'Create successfully!' });
+});
+
+const updateWishlist= asynHandler(async(req,res)=>{
+  const {sid} =req.params 
+  const {wid} = req.body
+  
+  const {_id}=req.user
+  const user = await User.findById(_id)
+  const playlist = user?.wishlist.find((el) => el._id.toString() === wid);
+  const isRemoved = playlist && playlist.songs.includes(sid);
+  if(isRemoved){ 
+    const result = await User.findOneAndUpdate(
+      {_id: _id,"wishlist._id":wid},
+      {$pull:{"wishlist.$.songs":sid}},
+      {new:true}
+    ).select('wishlist')
+    return res.status(200).json({
+      success: true,
+      mess: result?.wishlist.find((el) => el._id.toString() === wid),
+      isRemoved
+    });
+  }
+   // Nếu bài hát không tồn tại trước đó, thêm vào playlist
+   const updatedUser = await User.findOneAndUpdate(
+    { _id: _id, "wishlist._id": wid },
+    { $addToSet: { "wishlist.$.songs": sid } },
+    { new: true }
+  ).select('wishlist');
+
+  return res.status(200).json({
+    success: true,
+    mess: updatedUser?.wishlist.find((el) => el._id.toString() === wid),
+    isRemoved
+  });
+})
 module.exports = {
   register,
   getAllUser,
@@ -289,5 +345,7 @@ module.exports = {
   uploadImageUser,
   updateUser,
   getCurrent,
-  finalRegister
+  finalRegister,
+  createWishlist,
+  updateWishlist
 };

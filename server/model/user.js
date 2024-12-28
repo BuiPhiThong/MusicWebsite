@@ -1,6 +1,6 @@
 const mongoose = require("mongoose"); // Erase if already required
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const { type } = require("os");
 // Declare the Schema of the Mongo model
 const userSchema = new mongoose.Schema(
@@ -43,12 +43,14 @@ const userSchema = new mongoose.Schema(
     passwordResetExpire: {
       type: String,
     },
-    whislist: [
+    wishlist: [
       {
-        nameWhislist:{type:String},
-        imageWhislist:{type:String},
-        songId: {type: mongoose.Types.ObjectId,ref: "Song"},
-      },
+        image: { type: String },
+        name: { type: String, require: true },
+        songs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Song" }],
+        description: { type: String },
+        displayMode:{type:String,enum:["Private","Public"],default:"Public"}
+      }
     ],
 
     role: {
@@ -64,9 +66,9 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "VipAccount",
     },
-    typeLogin:{
-      type:String,
-      default:"local"
+    typeLogin: {
+      type: String,
+      default: "local",
     },
     deleted: {
       type: Number,
@@ -78,21 +80,24 @@ const userSchema = new mongoose.Schema(
   }
 );
 userSchema.pre("save", async function (next) {
-  if(!this.isModified('password')){
-    next()
+  if (!this.isModified("password")) {
+    next();
   }
   const salt = bcrypt.genSaltSync(10);
 
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-userSchema.methods={
-  createPasswordChangToken : function(){
-    const resetToken = crypto.randomBytes(32).toString("hex")
+userSchema.methods = {
+  createPasswordChangToken: function () {
+    const resetToken = crypto.randomBytes(32).toString("hex");
 
-    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex")
-    this.passwordResetExpire= Date.now()+ 5*60*1000
-    return resetToken
-  }
-}
+    this.passwordResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    this.passwordResetExpire = Date.now() + 5 * 60 * 1000;
+    return resetToken;
+  },
+};
 module.exports = mongoose.model("User", userSchema);

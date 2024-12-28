@@ -5,6 +5,7 @@ import { ListenPlaylist, SearchHome } from './components';
 import FinalRegister from './pages/user/FinalRegister';
 import ResetPassword from './pages/user/ResetPassword';
 import { useSelector } from 'react-redux';
+import './index.css'
 function App() {
   const { isDarkMode } = useSelector((state) => state.theme);
   return (

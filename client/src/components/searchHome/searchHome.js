@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import Navigation from "../navigation/Navigation";
 import Sidebar from "../sidebar/Sidebar";
 import { FaHeartCirclePlus } from "react-icons/fa6";
@@ -15,7 +17,7 @@ import dataSearchReducer, {
   fetchDataPlaylistSearch,
   fetchDataSingerSearch,
 } from "../../reducers/dataSearchSlice";
-
+import { responsive } from "../../ultils/helper";
 const SearchHome = () => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -51,10 +53,14 @@ const SearchHome = () => {
     dataSongAll,
     countSongAll,
     counPlaylistAll,
+    countplaylistAll,
     countPlaylistSingerAll,
     sumPlaylistAll,
     dataPlaylistAll,
+    dataPlaylistSingerAll
   } = dataAllSearch;
+  // console.log("dataPlaylistAll",dataPlaylistAll);
+
   //data song search
   const { countSongSearch, listSongSearch } = dataSongSearch;
   //data playlist
@@ -229,6 +235,53 @@ const SearchHome = () => {
                     ))
                   )}
                 </ul>
+                <div  className="col-md-9">
+                  <div>
+                    <h3 className="mt-4 title_search">
+                      <a href="" className="text-decoration-none">
+                        Playlist
+                        <span>(Có {countplaylistAll} kết quả)</span>
+                      </a>
+                    </h3>
+                  </div>
+                  <Carousel
+                    responsive={responsive}
+                    itemClass="carousel-item-spacing"
+                    infinite={true} // Kích hoạt lặp vô hạn
+                  >
+                    {
+                    dataPlaylistAll?.map((item) => 
+                      (
+                        <div key={item.id}
+                          style={{
+                            textAlign: "center",
+                            width: "100%",
+                            height: "152px", // Ensure consistent height
+                            padding: "0 5px", // Add some padding between items
+                          }}
+                        >
+                         <a href="#">
+                         <img
+                            src={item?.image}
+                            alt={item.caption}
+                            style={{
+                              width: "100%", // Use full width of container
+                              height: "152px", // Use full height of container
+                              objectFit: "cover", // Maintain aspect ratio without distortion
+                              borderRadius: "8px",
+                            }}
+                          />
+                         </a>
+                          <div className="box-info">
+                            <p>{item?.name}</p>
+                          </div>
+                        </div>
+                      )
+                    )
+                    }
+                   
+                  </Carousel>
+                </div>
               </div>
             </div>
           ) : (

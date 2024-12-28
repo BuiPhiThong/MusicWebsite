@@ -36,16 +36,17 @@ const searchHome = asynHandler(async (req, res) => {
       })
         .select("songName songImg")
         .populate("singerId", "singerName")
-        .limit(8);
+        .limit(5);
 
       countDataSongAll = await Song.countDocuments({
         $or: [{ singerId: { $in: singerIds } }, { songName: allSearch }],
         deleted: 0,
       });
 
+      //playlist
       dataplaylistAll = await Playlist.find({ name: allSearch, deleted: 0 })
-        .select("name")
-        .limit(10);
+        .select("name image")
+        .limit(7);
       countDataPlaylistAll = await Playlist.countDocuments({
         name: allSearch,
         deleted: 0,
@@ -56,22 +57,24 @@ const searchHome = asynHandler(async (req, res) => {
         deleted: 0,
       })
         .populate("playlist.songs", "songName")
-        .select("playlist.name");
+        .select("playlist.name playlist.image");
+        
       countDataPlaylistSingerAll = await Singer.countDocuments({
         "playlist.name": { $regex: all, $options: "i" },
         deleted: 0,
       });
-      const result = dataPlaylistSingerAll.map((singer) => {
-        const matchedPlaylists = singer.playlist.filter((playlist) =>
-          playlist.name.toLowerCase().includes(all.toLowerCase())
-        );
-        return {
-          singerName: singer.singerName,
-          playlists: matchedPlaylists,
-        };
-      });
-
-      const playlistAll = [...dataplaylistAll, ...dataPlaylistSingerAll];
+      // const result = dataPlaylistSingerAll.map((singer) => {
+      //   const matchedPlaylists = singer.playlist.filter((playlist) =>
+      //     playlist.name.toLowerCase().includes(all.toLowerCase())
+      //   );
+      //   return {
+      //     playlists: matchedPlaylists,
+      //   };
+      // });
+      const result = dataPlaylistSingerAll.map(el=>el.playlist).flat()
+      // console.log(result);
+      
+      const playlistAll = [...dataplaylistAll, ...result];
       const countplaylistAll = playlistAll.length;
       return res.status(200).json({
         data: {

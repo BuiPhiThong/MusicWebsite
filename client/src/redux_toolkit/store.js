@@ -12,6 +12,7 @@ import listenPlaylistReducer from "../reducers/listenPlaylistSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Local storage
 import themeReducer from "../reducers/themeSlice";
+import actionUserReducer from "../reducers/actionUser";
 
 // Cấu hình redux-persist
 const persistConfig = {
@@ -49,7 +50,8 @@ const rootReducer = combineReducers({
   popupSearch: popupSearchReducer.reducer,
   dataSearch: dataSearchReducer.reducer,
   listenPlaylist: listenPlaylistReducer.reducer,
-  theme:themeReducer.reducer
+  theme:themeReducer.reducer,
+  actionUser:actionUserReducer.reducer
 });
 
 // Áp dụng persistReducer cho rootReducer

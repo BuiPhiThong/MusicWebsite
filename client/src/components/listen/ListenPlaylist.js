@@ -15,10 +15,17 @@ import { useDispatch, useSelector } from "react-redux";
 import listenPlaylistReducer, {
   fetchDataListenPlaylist,
 } from "../../reducers/listenPlaylistSlice";
-
+import { fetchCurrent, fetchCurrentPlaylist } from "../../reducers/actionUser";
+import { apiWishList } from "../../apis/user";
+import { toast } from 'react-toastify'; // Import toast từ react-toastify
 const ListenPlaylist = () => {
   const dispatch = useDispatch();
   const audioRef = useRef(null);
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+  const [currentSelectedSong, setCurrentSelectedSong] = useState(null); // Lưu bài hát hiện tại
+
+  const popupRef = useRef(null); // Tạo ref để tham chiếu đến popup
   const {
     isPlaying,
     songProgress,
@@ -32,19 +39,18 @@ const ListenPlaylist = () => {
     isLoading,
     error,
   } = useSelector((state) => state.listenPlaylist);
-
+  const { isLogged } = useSelector((state) => state.auth);
+  const { profile } = useSelector((state) => state.actionUser);
   const { slug } = useParams();
-  // const [data, setData] = useState([]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const dataFetch = await apiGetListenSong(slug);
-  //     setData(dataFetch);
-  //   };
-  //   fetchData();
-  // }, []);
   useEffect(() => {
     dispatch(fetchDataListenPlaylist(slug));
   }, [dispatch, slug]);
+  useEffect(() => {
+    if (isLogged) {
+      dispatch(fetchCurrentPlaylist());
+    }
+  }, [dispatch, isLogged]);
+
   const currentSong = playlistData?.songs?.[currentSongIndex];
 
   useEffect(() => {
@@ -54,7 +60,6 @@ const ListenPlaylist = () => {
       audioRef.current.play();
     }
   }, [currentSong]);
-  console.log(playlistData);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
@@ -128,7 +133,69 @@ const ListenPlaylist = () => {
 
     dispatch(listenPlaylistReducer.actions.togglePlay(true));
   };
+  const handleHeartClick = (idSong) => {
+    setPopupVisible(true); // Hiển thị pop-up
+    // console.log(idSong);
+    setCurrentSelectedSong(idSong)
+    const matchedPlaylists= profile?.wishlist?.filter((el)=>{
+      const existed = el?.songs.some((item)=>item.toString()===idSong)
+      return existed
+    })
+    setSelectedPlaylists(matchedPlaylists?.map(el=>el?._id))
+  };
 
+  const closePopup = () => {
+    setPopupVisible(false); // Đóng pop-up
+  };
+
+  const handleClickOutside = (event) => {
+    if (popupRef.current && !popupRef.current.contains(event.target)) {
+      closePopup(); // Đóng pop-up nếu click ra ngoài
+    }
+  };
+
+  useEffect(() => {
+    if (isPopupVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isPopupVisible]);
+
+  const handleCheckboxSelected = async (plid,pln) => {
+    try {    
+      // Kiểm tra nếu playlist đã được chọn
+      
+  
+      // Gọi API
+      const response = await apiWishList(currentSelectedSong, plid);
+      
+      if (response?.success) {
+        {
+          response?.isRemoved ? toast.success(`Remove from ${pln}`,{icon: "🚀"}):toast.success(`Added to ${pln}`,{icon: "🚀"})  
+        }
+       
+        const updatedData = response.mess
+        setSelectedPlaylists((prev)=>{
+          const isSelectedCurrent= updatedData.songs.includes(currentSelectedSong)
+          if(isSelectedCurrent){
+            return [...prev,plid]            
+          }
+          
+          return prev.filter((idprev)=>idprev!==plid)
+        })
+        console.log(selectedPlaylists);
+                
+       }else{
+        toast.success(`Updated Failed`,{icon: "🚀"})
+       }
+      
+    } catch (error) {
+      console.error("Error updating playlist:", error);
+    }
+  };
+  
   return (
     <div className="container">
       <Navigation />
@@ -191,7 +258,13 @@ const ListenPlaylist = () => {
                       ))}
 
                       <td>
-                        <RiHeartAddLine fontSize="18px" />
+                        <RiHeartAddLine
+                          fontSize="18px"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleHeartClick(song._id);
+                          }}
+                        />
                         <BsDownload className="mx-2" />
                         <LuExternalLink className="mx-1" />
                       </td>
@@ -199,6 +272,32 @@ const ListenPlaylist = () => {
                   ))}
                 </tbody>
               </table>
+              {isPopupVisible &&
+                (isLogged ? (
+                  <div className="popup-overlay">
+                    <div className="popup" ref={popupRef}>
+                      <h4>Lưu vào!</h4>
+                      {profile?.wishlist?.map((el,index) => (
+                        <div key={index}>
+                          <input type="checkbox" className="mx-3" checked={selectedPlaylists.includes(el?._id)} onChange={()=>handleCheckboxSelected(el._id,el.name)} />
+                          <label>{el?.name}</label>
+                        </div>
+                      ))}
+                      <button className="rounded-pill">
+                        <IoMdAdd className="mb-1 fs-4" />
+                        Danh sách phát mới
+                      </button>
+                      {/* <button onClick={closePopup}>Đóng</button> */}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="popup-overlay">
+                    <div className="popup" ref={popupRef}>
+                      <h4>Vui lòng đăng nhập</h4>
+                      <p>Bạn cần đăng nhập để sử dụng tính năng này.</p>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -207,76 +306,6 @@ const ListenPlaylist = () => {
         </div>
       </div>
 
-      {/* Music Player Modal */}
-      {/* {showMusicPlayer && (
-        <div className="music-modal">
-          <div className="close-btn" onClick={closeModal}>
-            <IoMdClose />
-          </div>
-          <div className="song-info">
-            <img
-              src="https://avatar-ex-swe.nixcdn.com/playlist/2024/10/24/c/4/3/d/1729764086809_300.jpg"
-              alt="Song"
-            />
-            <div>
-              <h5>Daily mix 2</h5>
-              <p>Justin Bieber</p>
-            </div>
-          </div>
-
-          <div className="controls">
-            {isPlaying ? (
-              <FaPause onClick={handlePlayPause} />
-            ) : (
-              <FaCirclePlay onClick={handlePlayPause} />
-            )}
-
-            <div className="volume-control">
-              <FaVolumeUp className="volume-icon" />
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={handleVolumeChange}
-                className="volume-slider"
-              />
-            </div>
-          </div>
-
-          <div className="song-time mx-2">
-            <span>
-              {formatTime(currentTime)}/{formatTime(duration)}
-            </span>
-          </div>
-
-          <div className="progress-bar">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={songProgress}
-              onChange={handleSeek}
-              className="progress-slider"
-            />
-          </div>
-
-          <audio
-            ref={audioRef}
-            src={audioUrl}
-            preload="auto"
-            onLoadedMetadata={() => {
-              dispatch(
-                listenPlaylistReducer.actions.setDuration(
-                  audioRef.current.duration
-                )
-              );
-              audioRef.current.currentTime = savedTime; // Nếu mở lại thì phát từ savedTime
-            }}
-            onTimeUpdate={updateProgress} // Cập nhật tiến độ khi phát nhạc
-          />
-        </div>
-      )} */}
 
       {showMusicPlayer && (
         <div className="music-modal">
@@ -284,19 +313,32 @@ const ListenPlaylist = () => {
             <IoMdClose />
           </div>
           <div className="song-info">
-          <img
-        src={playlistData?.songs[currentSongIndex]?.songImg || "https://stc-id.nixcdn.com/v11/images/avatar_default.jpg"}
-        alt="Song"
-      />
-      <div>
-        {/* Hiển thị tên bài hát và tên ca sĩ của bài hát đang phát */}
-        <h5>{playlistData?.songs[currentSongIndex]?.songName}</h5> {/* Tên bài hát */}
-        <p>
-          {playlistData?.songs[currentSongIndex]?.singerId?.map((singer, idx) => (
-            <span key={idx}>{singer.singerName}{idx < playlistData.songs[currentSongIndex].singerId.length - 1 ? ", " : ""}</span>
-          ))}
-        </p> {/* Ca sĩ */}
-      </div>
+            <img
+              src={
+                playlistData?.songs[currentSongIndex]?.songImg ||
+                "https://stc-id.nixcdn.com/v11/images/avatar_default.jpg"
+              }
+              alt="Song"
+            />
+            <div>
+              {/* Hiển thị tên bài hát và tên ca sĩ của bài hát đang phát */}
+              <h5>{playlistData?.songs[currentSongIndex]?.songName}</h5>{" "}
+              {/* Tên bài hát */}
+              <p>
+                {playlistData?.songs[currentSongIndex]?.singerId?.map(
+                  (singer, idx) => (
+                    <span key={idx}>
+                      {singer.singerName}
+                      {idx <
+                      playlistData.songs[currentSongIndex].singerId.length - 1
+                        ? ", "
+                        : ""}
+                    </span>
+                  )
+                )}
+              </p>{" "}
+              {/* Ca sĩ */}
+            </div>
           </div>
 
           <div className="controls">

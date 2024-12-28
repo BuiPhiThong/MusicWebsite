@@ -125,7 +125,7 @@ const getPlayListByTypeId = asyncHandler(async (req, res) => {
 
 const getPlaylistBySlug = asyncHandler(async(req,res)=>{
   const {slug} =req.params
-  console.log(slug);
+  // console.log(slug);
   
   // const response = await PlayList.findOne({slug:slug}).populate('songs','songName')
   const response = await PlayList.findOne({ slug: slug })

@@ -38,7 +38,7 @@ export const fetchDataPlaylistSearch = createAsyncThunk(
 const dataSearchReducer = createSlice({
   name: 'dataSearch',
   initialState: {
-    dataAllSearch: { countSongAll: 0,counPlaylistAll:0,countPlaylistSingerAll:0,sumPlaylistAll:0, dataSongAll: [],dataPlaylistAll:[] },
+    dataAllSearch: { countSongAll: 0,counPlaylistAll:0,countPlaylistSingerAll:0,sumPlaylistAll:0, dataSongAll: [],dataPlaylistAll:[],dataPlaylistSingerAll:[],countplaylistAll:0 },
     loadingSearchAll: false,
     errorSearchAll: null,
 
@@ -82,7 +82,9 @@ const dataSearchReducer = createSlice({
         countPlaylistSingerAll: action.payload.countDataPlaylistSingerAll,
         dataSongAll:action.payload.dataSongAll,
         sumPlaylistAll:action.payload.countplaylistAll,
-        dataPlaylistAll:action.payload.playlistAll
+        dataPlaylistAll:action.payload.playlistAll,        
+        dataPlaylistSingerAll:action.payload.dataPlaylistSingerAll,
+        countplaylistAll:action.payload.countplaylistAll
       }
       state.errorSearchAll=null
     })
