@@ -441,5 +441,93 @@
   .popup.new-playlist-popup button:hover {
     background: #0056b3;
   }
+
+  /* popup savename */
+  .custom-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .custom-popup-container {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .custom-popup-container h4 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .custom-form-group {
+    margin-bottom: 15px;
+  }
+  
+  .custom-form-label {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .custom-form-control {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .custom-input-error {
+    border-color: red;
+  }
+  
+  .custom-text-danger {
+    font-size: 12px;
+    color: red;
+  }
+  
+  .custom-popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .custom-btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .custom-btn-cancel {
+    background: #6c757d;
+    color: white;
+    border: none;
+  }
+  
+  .custom-btn-save {
+    background: #007bff;
+    color: white;
+    border: none;
+  }
+  
+  .custom-btn:hover {
+    opacity: 0.9;
+  }
+  
   
   

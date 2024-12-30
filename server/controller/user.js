@@ -1,4 +1,5 @@
 const User = require("../model/user");
+const PlayList = require("../model/playlist");
 const TempRegister = require("../model/temRegister");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -8,6 +9,7 @@ const { sendEmail } = require("../ultils/sendMail");
 const crypto = require("crypto");
 const uniquid = require("uniqid");
 const { log } = require("console");
+const playlist = require("../model/playlist");
 
 const register = asynHandler(async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -37,7 +39,9 @@ const register = asynHandler(async (req, res) => {
     subject: "Email Verification",
   });
 
-  return res.status(200).json({ success: true, message: "Verification email sent" });
+  return res
+    .status(200)
+    .json({ success: true, message: "Verification email sent" });
 });
 
 const finalRegister = asynHandler(async (req, res) => {
@@ -74,8 +78,6 @@ const finalRegister = asynHandler(async (req, res) => {
   }
 });
 
-
-
 const login = asynHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -84,7 +86,9 @@ const login = asynHandler(async (req, res) => {
 
   const user = await User.findOne({ email: email });
   if (!user) {
-    return res.status(404).json({ success: false, message: "Email does not exist" });
+    return res
+      .status(404)
+      .json({ success: false, message: "Email does not exist" });
   } else {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
@@ -103,7 +107,7 @@ const login = asynHandler(async (req, res) => {
       // Lưu refreshToken vào cookie
       res.cookie("refreshToken", refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        httpOnly: true,
       });
 
       return res.status(200).json({
@@ -196,8 +200,7 @@ const forgotPassword = asynHandler(async (req, res) => {
 const resetPassword = asynHandler(async (req, res) => {
   const { password } = req.body;
 
-  const {token} = req.params
-
+  const { token } = req.params;
 
   const checkToken = crypto.createHash("sha256").update(token).digest("hex");
 
@@ -281,60 +284,110 @@ const getCurrent = asynHandler(async (req, res) => {
 
 const createWishlist = asynHandler(async (req, res) => {
   const { _id } = req.user;
-  const {sid}= req.params
-  const { name, displayMode} = req.body;
-  console.log(name ,displayMode ,sid);
-  
+  const { sid } = req.params;
+  const { name, displayMode } = req.body;
+  console.log(name, displayMode, sid);
+
   if (!name || !sid || !displayMode) {
-    throw new Error('Missing input to create wishlist!');
+    throw new Error("Missing input to create wishlist!");
   }
   const user = await User.findById(_id);
   if (!user) {
-    return res.status(404).json({ success: false, mess: 'User not found!' });
+    return res.status(404).json({ success: false, mess: "User not found!" });
   }
   const isDuplicate = user.wishlist.some((item) => item.name === name);
   if (isDuplicate) {
-    throw new Error('Wishlist name must be unique!');
+    throw new Error(`Wishlist with name ${name} has been exited!`);
   }
-  user.wishlist.push({ name:name, songs:sid,displayMode:displayMode});
+  user.wishlist.push({ name: name, songs: sid, displayMode: displayMode });
   await user.save();
 
-  return res.status(200).json({ success: true, mess: 'Create successfully!' });
+  return res.status(200).json({ success: true, mess: "Create successfully!" });
 });
 
-const updateWishlist= asynHandler(async(req,res)=>{
-  const {sid} =req.params 
-  const {wid} = req.body
-  
-  const {_id}=req.user
-  const user = await User.findById(_id)
+const updateWishlist = asynHandler(async (req, res) => {
+  const { sid } = req.params;
+  const { wid } = req.body;
+
+  const { _id } = req.user;
+  const user = await User.findById(_id);
   const playlist = user?.wishlist.find((el) => el._id.toString() === wid);
   const isRemoved = playlist && playlist.songs.includes(sid);
-  if(isRemoved){ 
+  if (isRemoved) {
     const result = await User.findOneAndUpdate(
-      {_id: _id,"wishlist._id":wid},
-      {$pull:{"wishlist.$.songs":sid}},
-      {new:true}
-    ).select('wishlist')
+      { _id: _id, "wishlist._id": wid },
+      { $pull: { "wishlist.$.songs": sid } },
+      { new: true }
+    ).select("wishlist");
     return res.status(200).json({
       success: true,
       mess: result?.wishlist.find((el) => el._id.toString() === wid),
-      isRemoved
+      isRemoved,
     });
   }
-   // Nếu bài hát không tồn tại trước đó, thêm vào playlist
-   const updatedUser = await User.findOneAndUpdate(
+  // Nếu bài hát không tồn tại trước đó, thêm vào playlist
+  const updatedUser = await User.findOneAndUpdate(
     { _id: _id, "wishlist._id": wid },
     { $addToSet: { "wishlist.$.songs": sid } },
     { new: true }
-  ).select('wishlist');
+  ).select("wishlist");
 
   return res.status(200).json({
     success: true,
     mess: updatedUser?.wishlist.find((el) => el._id.toString() === wid),
-    isRemoved
+    isRemoved,
   });
-})
+});
+
+const saveAPlaylist = asynHandler(async (req, res) => {
+  const { slug } = req.params;
+  const { _id } = req.user;
+  const playlist = await PlayList.findOne({ slug: slug });
+  const wishlist = {
+    name: playlist.name +' T-GT',
+    image: playlist.image,
+    songs: playlist.songs,
+  };
+  const user= await User.findById(_id)
+  const exitedWishlist = user?.wishlist?.find((el)=>el?.name===wishlist.name)
+  if(exitedWishlist){
+    throw new Error(`Playlist with name ${playlist?.name} has been saved.Please enter another name to avoid duplicates`)
+  } 
+  const response = await User.findByIdAndUpdate(_id,
+    {$push:{wishlist:wishlist}},
+    {new:true}
+  )
+  return res.status(200).json({
+    success: response? true:false,
+    mess:response?wishlist: 'Fail to save playlist'
+  })
+});
+
+const saveAPlaylist2 = asynHandler(async (req, res) => {
+  const { slug } = req.params;
+  const { _id } = req.user;
+  const {name} = req.body
+  
+  const playlist = await PlayList.findOne({ slug: slug });
+  const wishlist = {
+    name:  name +' T-GT',
+    image: playlist.image,
+    songs: playlist.songs,
+  };
+  const user= await User.findById(_id)
+  const exitedWishlist = user?.wishlist?.find((el)=>el?.name===wishlist.name)
+  if(exitedWishlist){
+    throw new Error(`Playlist with name ${name} has been saved.Please enter another name to avoid duplicates`)
+  } 
+  const response = await User.findByIdAndUpdate(_id,
+    {$push:{wishlist:wishlist}},
+    {new:true}
+  )
+  return res.status(200).json({
+    success: response? true:false,
+    mess:response?wishlist: 'Fail to save playlist'
+  })
+});
 module.exports = {
   register,
   getAllUser,
@@ -348,5 +401,7 @@ module.exports = {
   getCurrent,
   finalRegister,
   createWishlist,
-  updateWishlist
+  updateWishlist,
+  saveAPlaylist,
+  saveAPlaylist2
 };

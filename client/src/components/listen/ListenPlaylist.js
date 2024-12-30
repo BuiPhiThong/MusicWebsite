@@ -8,16 +8,21 @@ import { LuExternalLink } from "react-icons/lu";
 import { RiHeartAddLine } from "react-icons/ri";
 import { FaVolumeUp } from "react-icons/fa";
 import "./listenplaylist.css";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import listenPlaylistReducer, {
   fetchDataListenPlaylist,
 } from "../../reducers/listenPlaylistSlice";
 import { fetchCurrentPlaylist } from "../../reducers/actionUser";
-import { apiCreateWishList, apiUpandReWishList } from "../../apis/user";
+import {
+  apiCreateWishList,
+  apiSaveAPlaylist,
+  apiSaveAPlaylist2,
+  apiUpandReWishList,
+} from "../../apis/user";
 import { toast } from "react-toastify"; // Import toast từ react-toastify
 import { useForm } from "react-hook-form";
-
+import { Tooltip } from "antd";
 const ListenPlaylist = () => {
   const dispatch = useDispatch();
   const audioRef = useRef(null);
@@ -30,6 +35,7 @@ const ListenPlaylist = () => {
     name: "",
     displayMode: "",
   });
+  const [popupSaveName, setPopupSaveName] = useState(false);
   const {
     register,
     handleSubmit,
@@ -61,7 +67,7 @@ const ListenPlaylist = () => {
     if (isLogged) {
       dispatch(fetchCurrentPlaylist());
     }
-  }, [dispatch, isLogged,profile]);
+  }, [dispatch, isLogged]);
 
   const currentSong = playlistData?.songs?.[currentSongIndex];
 
@@ -146,8 +152,7 @@ const ListenPlaylist = () => {
     dispatch(listenPlaylistReducer.actions.togglePlay(true));
   };
   const handleHeartClick = (idSong) => {
-    setPopupVisible(true); // Hiển thị pop-up
-    // console.log(idSong);
+    setPopupVisible(true);
     setCurrentSelectedSong(idSong);
     const matchedPlaylists = profile?.wishlist?.filter((el) => {
       const existed = el?.songs.some((item) => item.toString() === idSong);
@@ -157,7 +162,9 @@ const ListenPlaylist = () => {
   };
 
   const closePopup = () => {
-    setPopupVisible(false); // Đóng pop-up
+    setPopupVisible(false);
+    setPopupSaveName(false);
+    reset();
   };
 
   const handleClickOutside = (event) => {
@@ -208,6 +215,7 @@ const ListenPlaylist = () => {
   };
 
   const openNewPlaylistPopup = () => {
+    setPopupVisible(false);
     setNewPlaylistPopupVisible(true); // Hiển thị pop-up
   };
 
@@ -217,24 +225,63 @@ const ListenPlaylist = () => {
       name: "",
       displayMode: "",
     });
-    reset(); 
+    reset();
   };
-  const handleAddplaylist = async(data) => {
-    
-    const displayMode=data.displayMode==='0' ?'Public':data.displayMode==='1' ?'Private':''
-    const dataUpdate={...data,displayMode:displayMode}
-    
-    try {
-      const response = await  apiCreateWishList(currentSelectedSong,dataUpdate)
+  const handleAddplaylist = async (data) => {
+    const displayMode =
+      data.displayMode === "0"
+        ? "Public"
+        : data.displayMode === "1"
+        ? "Private"
+        : "";
+    const dataUpdate = { ...data, displayMode: displayMode };
 
-      if(response?.success){
-        toast.success(`Add to ${data.name}`, { icon: "🚀" })
-        closeNewPlaylistPopup()
+    try {
+      const response = await apiCreateWishList(currentSelectedSong, dataUpdate);
+
+      if (response?.success) {
+        dispatch(fetchCurrentPlaylist());
+        toast.success(`Added to ${data.name}`, { icon: "🚀" });
+        closeNewPlaylistPopup();
       }
     } catch (error) {
-      toast.error(`Add to ${data.name} failed` , { icon: "🚀" })
+      toast.error(`${error?.response?.data?.mess}`, { icon: "🚀" });
     }
     reset();
+  };
+
+  const handleSavePlaylist = async (slug) => {
+    try {
+      const response = await apiSaveAPlaylist(slug);
+      console.log(response);
+
+      if (response?.success) {
+        dispatch(fetchCurrentPlaylist());
+        toast.success(`Save ${response?.mess?.name}`, {
+          icon: "🚀",
+        });
+      }
+    } catch (error) {
+      setPopupSaveName(true);
+
+      toast.success(`${error?.response?.data?.mess}`, { icon: "🚀" });
+    }
+  };
+
+  const handleSaveName = async (slug, data) => {
+    const name = data.name;
+
+    try {
+      const response = await apiSaveAPlaylist2(slug, name);
+      if (response?.success) {
+        dispatch(fetchCurrentPlaylist());
+        toast.success(`Save playlist with name: ${name} successfully`, {
+          icon: "🚀",
+        });
+      }
+    } catch (error) {
+      toast.success(`${error?.response?.data?.mess}`, { icon: "🚀" });
+    }
   };
   return (
     <div className="container">
@@ -259,18 +306,30 @@ const ListenPlaylist = () => {
           </div>
           <div className="row">
             <div className="col-md-12 coltrol_bar">
-              <FaCirclePlay
-                fontSize="60px"
-                className="mt-3 mb-3"
-                onClick={() =>
-                  dispatch(
-                    listenPlaylistReducer.actions.toggleMusicPlayer(true)
-                  )
-                }
-              />
+              <Tooltip title="Listen">
+                <FaCirclePlay
+                  fontSize="60px"
+                  className="mt-3 mb-3"
+                  cursor="pointer"
+                  onClick={() =>
+                    dispatch(
+                      listenPlaylistReducer.actions.toggleMusicPlayer(true)
+                    )
+                  }
+                />
+              </Tooltip>
 
-              <MdAddCircleOutline fontSize="40px" className="mx-3 mt-2" />
-              <IoIosMore fontSize="30px" />
+              <Tooltip title="Save">
+              <MdAddCircleOutline
+                fontSize="40px"
+                className="mx-3 mt-2"
+                cursor="pointer"
+                onClick={() => handleSavePlaylist(slug)}
+              />
+              </Tooltip>
+              <Tooltip title="More">
+              <IoIosMore fontSize="30px" cursor="pointer" />
+              </Tooltip>
             </div>
           </div>
           <div className="row mx-1">
@@ -298,15 +357,21 @@ const ListenPlaylist = () => {
                       ))}
 
                       <td>
-                        <RiHeartAddLine
-                          fontSize="18px"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleHeartClick(song._id);
-                          }}
-                        />
-                        <BsDownload className="mx-2" />
-                        <LuExternalLink className="mx-1" />
+                        <Tooltip title="Wishlist">
+                          <RiHeartAddLine
+                            fontSize="18px"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleHeartClick(song._id);
+                            }}
+                          />
+                        </Tooltip>
+                        <Tooltip title="Download">
+                          <BsDownload className="mx-2" />
+                        </Tooltip>
+                        <Tooltip title="Copy">
+                          <LuExternalLink className="mx-1" />
+                        </Tooltip>
                       </td>
                     </tr>
                   ))}
@@ -370,11 +435,12 @@ const ListenPlaylist = () => {
                             required: "Name là bắt buộc",
                           })}
                         />
-                        
                       </div>
                       {errors.name && (
-                          <div className="text-danger fs-6 justify-content-end">{errors.name.message}</div>
-                        )}
+                        <div className="text-danger fs-6 justify-content-end">
+                          {errors.name.message}
+                        </div>
+                      )}
                       <div className="form-group">
                         <label htmlFor="playlistPrivacy" className="form-label">
                           Visibility:
@@ -407,6 +473,55 @@ const ListenPlaylist = () => {
                         </button>
                         <button type="submit" className="rounded-pill">
                           Tạo
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+              {popupSaveName && (
+                <div className="custom-popup-overlay">
+                  <div className="custom-popup-container">
+                    <h4>Nhập tên</h4>
+                    <form
+                      onSubmit={handleSubmit((data) =>
+                        handleSaveName(slug, data)
+                      )}
+                      method="post"
+                    >
+                      <div className="custom-form-group">
+                        <label
+                          htmlFor="nameInput"
+                          className="custom-form-label"
+                        >
+                          Vui lòng nhập tên khác để tránh trùng lặp
+                        </label>
+                        <input
+                          id="nameInput"
+                          type="text"
+                          placeholder="Nhập tên"
+                          className="custom-form-control"
+                          {...register("name", { required: "Tên là bắt buộc" })}
+                        />
+                      </div>
+                      {errors.name && (
+                        <div className="text-danger fs-6">
+                          {errors.name.message}
+                        </div>
+                      )}
+                      <div className="custom-popup-actions">
+                        <button
+                          type="button"
+                          className="custom-btn custom-btn-cancel"
+                          onClick={closePopup}
+                        >
+                          Hủy
+                        </button>
+                        <button
+                          type="submit"
+                          className="custom-btn custom-btn-save"
+                        >
+                          Lưu
                         </button>
                       </div>
                     </form>
