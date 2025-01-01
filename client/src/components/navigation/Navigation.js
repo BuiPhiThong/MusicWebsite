@@ -37,6 +37,8 @@ const Navigation = () => {
   const { isLogged, user, errorCurrent, accessToken } = useSelector(
     (state) => state.auth
   );
+  
+  
   const { isDarkMode } = useSelector((state) => state.theme);
   useEffect(() => {
     if (isLogged && accessToken) dispatch(fetchCurrent());
@@ -180,7 +182,12 @@ const Navigation = () => {
       checkToken();
     }
   }, [dispatch, accessToken]); // Phụ thuộc vào accessToken để kiểm tra lại khi token thay đổi
-
+const handleNavigateProfile=()=>{
+  navigate(`/myprofile`)
+}
+const handleNavigateMylist=()=>{
+  navigate(`/mylist`)
+}
   return (
     <div className="row align-items-center pt-3">
       <div className="col-md-6">
@@ -379,8 +386,11 @@ const Navigation = () => {
                       <span className="dropdown-item">
                         Xin chào, {user?.lastname || "Người dùng"}!
                       </span>
-                      <button className="dropdown-item">
+                      <button className="dropdown-item" onClick={()=>handleNavigateProfile()}>
                         Thông tin tài khoản
+                      </button>
+                      <button className="dropdown-item" onClick={()=>handleNavigateMylist()}>
+                        Nhạc của tôi
                       </button>
                       <button className="dropdown-item" onClick={()=>dispatch(themeReducer.actions.toggleDarkMode())}>
                         {isDarkMode ? (<>Dark Mode <BsMoonFill className="my-2" /></>

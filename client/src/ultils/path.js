@@ -6,7 +6,9 @@ const path ={
     SEARCH:'/search',
     ListenPlaylist:'/danh-sach/:slug',
     FinalRegister:'/finalregister/:token',
-    ResetPassword:'/resetpassword/:token'
+    ResetPassword:'/resetpassword/:token',
+    Profile:'/myprofile',
+    Mylist:'/mylist'
 }
 
 export default path

@@ -2,10 +2,11 @@ import {Route, Routes} from 'react-router-dom'
 import {Home, Public ,Login} from './pages/public';
 import path from './ultils/path';
 import { ListenPlaylist, SearchHome } from './components';
-import FinalRegister from './pages/user/FinalRegister';
-import ResetPassword from './pages/user/ResetPassword';
+import FinalRegister from './pages/guest/FinalRegister';
+import ResetPassword from './pages/guest/ResetPassword';
 import { useSelector } from 'react-redux';
 import './index.css'
+import { Mylist, Profile } from './pages/private';
 function App() {
   const { isDarkMode } = useSelector((state) => state.theme);
   return (
@@ -19,6 +20,8 @@ function App() {
           </Route>
           <Route path={path.SEARCH} element={<SearchHome/>}/>
           <Route path={path.ListenPlaylist} element={<ListenPlaylist/>}/>
+          <Route path={path.Profile} element={<Profile/>}/>
+          <Route path={path.Mylist} element={<Mylist/>}/>
       </Routes>
     </div>
   );
