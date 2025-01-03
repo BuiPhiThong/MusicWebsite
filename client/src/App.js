@@ -6,7 +6,7 @@ import FinalRegister from './pages/guest/FinalRegister';
 import ResetPassword from './pages/guest/ResetPassword';
 import { useSelector } from 'react-redux';
 import './index.css'
-import { Mylist, Profile } from './pages/private';
+import { ManagerAccount, Mylist, Profile } from './pages/private';
 function App() {
   const { isDarkMode } = useSelector((state) => state.theme);
   return (
@@ -17,6 +17,7 @@ function App() {
               <Route path={path.LOGIN} element={<Login/>}/>
               <Route path={path.FinalRegister} element={<FinalRegister/>}/>
               <Route path={path.ResetPassword} element={<ResetPassword/>}/>
+              <Route path={path.ManagerAccount} element={<ManagerAccount/>}/>
           </Route>
           <Route path={path.SEARCH} element={<SearchHome/>}/>
           <Route path={path.ListenPlaylist} element={<ListenPlaylist/>}/>

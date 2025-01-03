@@ -46,10 +46,10 @@ const Profile = () => {
             <p className="user-gender">
               Account: {user?.isVip ? "Tài khoản vip" : "Tài khoản thường"}
             </p>
-            <ul className="view-user">
+            {/* <ul className="view-user">
               <li className="view-profile">Lượt xem profile: 20</li>
               <li className="view-playlist">Lượt xem profile: 20</li>
-            </ul>
+            </ul> */}
           </div>
         </div>
         <div className="col-md-8">
@@ -147,7 +147,7 @@ const Profile = () => {
             {user?.wishlist?.map((el, index) => (
               <li className="col-md-2 playlist-item">
                 <div className="image-container">
-                  <a href="/danh-sach/playlist-1">
+                  <a href="#">
                     <img
                       src={
                         el?.image ||

@@ -33,3 +33,20 @@ export const responsive = {
     items: 1,
   },
 };
+
+export const convertToDateInputFormat = (dateOfBirth) => {
+  if (!dateOfBirth) return "";
+
+  const [day, month, year] = dateOfBirth.split("/");
+  return `${year}-${month}-${day}`;
+};
+
+export const convertToDate = (dateOfBirth) => {
+  if (!dateOfBirth) return "";
+
+  const [year, month, day] = dateOfBirth.split("-");
+  return `${day}/${month}/${year}`;
+  
+ 
+};
+

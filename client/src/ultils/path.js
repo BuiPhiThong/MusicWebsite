@@ -1,3 +1,4 @@
+
 const path ={
     PUBLIC:'/',
     HOME:'',
@@ -8,7 +9,8 @@ const path ={
     FinalRegister:'/finalregister/:token',
     ResetPassword:'/resetpassword/:token',
     Profile:'/myprofile',
-    Mylist:'/mylist'
+    Mylist:'/mylist',
+    ManagerAccount:'/manageraccount'
 }
 
 export default path

@@ -188,6 +188,9 @@ const handleNavigateProfile=()=>{
 const handleNavigateMylist=()=>{
   navigate(`/mylist`)
 }
+const handleNavigateManagerAccount =()=>{
+  navigate(`/manageraccount`)
+}
   return (
     <div className="row align-items-center pt-3">
       <div className="col-md-6">
@@ -388,6 +391,9 @@ const handleNavigateMylist=()=>{
                       </span>
                       <button className="dropdown-item" onClick={()=>handleNavigateProfile()}>
                         Thông tin tài khoản
+                      </button>
+                      <button className="dropdown-item" onClick={()=>handleNavigateManagerAccount()}>
+                        Quản lý tài khoản
                       </button>
                       <button className="dropdown-item" onClick={()=>handleNavigateMylist()}>
                         Nhạc của tôi

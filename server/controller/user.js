@@ -253,14 +253,16 @@ const uploadImageUser = asynHandler(async (req, res) => {
 });
 
 const updateUser = asynHandler(async (req, res) => {
-  const { uid } = req.params;
+  const { _id } = req.user;  
   if (Object.keys(req.body).length === 0 && !req.file)
     throw new Error("Missing input");
+  console.log(req.file);
+  
   const data = { ...req.body };
   if (req.file) {
     data.avatar = req.file.path;
   }
-  const response = await User.findByIdAndUpdate(uid, data, { new: true });
+  const response = await User.findByIdAndUpdate(_id, data, { new: true });
   return res.status(200).json({
     success: response ? true : false,
     mess: response ? response : "Update User failed!",

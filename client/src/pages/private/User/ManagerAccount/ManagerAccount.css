@@ -1,0 +1,432 @@
+.wraper {
+    position: relative;
+}
+
+.content-wraper {
+    margin: 0 auto;
+    padding: 0 10px;
+    display: flex;
+}
+
+.box-left-user {
+    width: 200px;
+    padding: 20px;
+    background: #e5e5e5;
+    border-radius: 3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.box-img-avatar {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #d9d9d9;
+    padding-bottom: 20px;
+}
+
+.box-img-avatar img {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.box-img-avatar p {
+    font-weight: bold;
+    margin: 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 10px 0;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+
+
+.sidebar-menu li.active {
+    background-color: #fff;
+    color: #0689ba;
+    border-radius: 5px;
+    font-size:14px;
+     font-weight: 700
+}
+
+
+.box-right-user {
+    flex-grow: 1;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Đặt box-group-left sử dụng flex để căn các phần tử dọc */
+.box-group-left {
+    display: flex;
+    flex-direction: column;  /* Sắp xếp các phần tử theo cột */
+    align-items: flex-start; /* Căn trái các phần tử */
+  }
+  
+  /* Định dạng cho mỗi box-detail-info */
+  .box-detail-info {
+    width: 330px;
+    padding: 10px 20px;
+    margin: 0 0 20px 0;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+  }
+  
+  /* Định dạng cho txt-sub-group */
+  .txt-sub-group {
+    width: 100%;
+    padding: 0 0 10px 0;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between; /* Đảm bảo "Giới thiệu" và "Chỉnh sửa" không bị chồng lên nhau */
+  }
+  
+  /* Định dạng cho box_user_action */
+  .box_user_action {
+    display: inline-block;
+  }
+  
+  /* Định dạng cho btn_edit_item */
+  .btn_edit_item {
+    font-size: 14px;
+    font-weight: 400 !important;
+    background: #fbfbfc url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1380px no-repeat;
+    padding: 3px 10px 3px 28px;
+    line-height: 24px;
+    height: 24px;
+    border-radius: 3px;
+    color: #333333 !important;
+    border: #a6a6a6 solid 1px;
+  }
+  
+  /* Định dạng cho các thẻ p trong box-detail-info */
+  .box-detail-info p {
+    color: #767676;
+    line-height: 24px;
+    font-size: 13px;
+    margin: 5px 0;  /* Tạo khoảng cách giữa các thẻ p */
+  }
+
+  /* group-right */
+  
+  /* Flexbox setup for right side */
+.box-right-user {
+    display: flex;
+    flex-direction: row; /* Chia thành 2 cột */
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;  /* Khoảng cách giữa các cột */
+  }
+  
+  /* Các box-detail-info trong cột bên phải */
+  .box-group-right {
+    display: flex;
+    flex-direction: column; /* Sắp xếp các box-detail-info theo chiều dọc */
+    gap: 20px;  /* Khoảng cách giữa các box */
+    flex: 1;  /* Cột này chiếm toàn bộ không gian còn lại */
+  }
+  
+  /* Định dạng chung cho box-detail-info */
+  .box-detail-info {
+    width: 100%; /* Điều chỉnh theo kích thước của cột */
+    padding: 10px 20px;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+    background: #f9f9f9;
+  }
+  
+  /* Định dạng cho txt-sub-group */
+  .txt-sub-group {
+    width: 100%;
+    padding: 0 0 10px 0;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Định dạng cho các thẻ p trong box-detail-info */
+  .box-detail-info p {
+    color: #767676;
+    line-height: 24px;
+    font-size: 13px;
+    margin: 5px 0;
+  }
+  
+
+  /* edit profile */
+  /* Form tổng */
+.update-account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Nhóm form */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #0689ba;
+  outline: none;
+}
+
+/* Nhóm ngày sinh */
+.birthdate-group {
+  display: flex;
+  gap: 10px;
+}
+
+.birthdate-group input {
+  width: 150px;
+}
+/* Ẩn các nút tăng giảm của input[type="number"] */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Ẩn nút tăng giảm trên Firefox */
+}
+
+
+/* Nút submit */
+/* Đặt các nút trên cùng một dòng */
+.form-actions {
+  display: flex;
+  gap: 15px; /* Khoảng cách giữa các nút */
+}
+
+/* Các nút */
+.btn-submit,
+.btn-back {
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  width: 100%; /* Đảm bảo nút chiếm 100% chiều rộng của phần tử cha */
+  max-width: 180px; /* Giới hạn chiều rộng tối đa */
+}
+
+.btn-submit {
+  background-color: #0689ba;
+  color: #fff;
+}
+
+.btn-submit:hover {
+  background-color: #005f80;
+}
+
+.btn-back {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-back:hover {
+  background-color: #999;
+}
+/* edit image */
+/* Định dạng phần nhập avatar */
+/* Định dạng phần nhập avatar */
+
+
+/* Khung chứa ảnh */
+/* Định dạng phần chứa avatar và nút chỉnh sửa */
+.avatar-container {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Tạo khoảng cách giữa ảnh và nút chỉnh sửa */
+}
+
+/* Khung chứa ảnh */
+.avatar-preview img {
+  width: 120px; /* Đặt kích thước của avatar */
+  height: 120px; /* Đặt kích thước của avatar */
+  border-radius: 50%; /* Đảm bảo hình ảnh hiển thị hình tròn */
+  object-fit: cover; /* Đảm bảo ảnh không bị biến dạng */
+  border: 2px solid #ccc; /* Viền xung quanh avatar */
+}
+
+/* Nút chỉnh sửa */
+.btn-edit-avatar {
+  background-color: #0689ba;
+  color: white;
+  font-size: 14px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.btn-edit-avatar:hover {
+  background-color: #005f80;
+}
+
+/* Nút submit và nút trở lại */
+.form-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-submit, .btn-back {
+  background-color: #0689ba;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-submit:hover, .btn-back:hover {
+  background-color: #005f80;
+}
+
+.btn-back {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-back:hover {
+  background-color: #999;
+}
+
+/* đổi mật khẩu */
+.password-link {
+  color: #ff4500; /* Màu chữ */
+  text-decoration: none; /* Bỏ gạch chân */
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.password-link:hover {
+  text-decoration: underline; /* Hiển thị gạch chân khi hover */
+}
+
+/* /model doi mat khau/ */
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal container */
+.modal-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* Form styles */
+.password-form .form-group {
+  margin-bottom: 15px;
+}
+
+.password-form label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.password-form input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.password-form input:focus {
+  border-color: #0689ba;
+  outline: none;
+}
+.password-link{
+  cursor: pointer;
+}
+/* Button styles */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  background-color: #ccc;
+  color: #333;
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background-color: #999;
+}
+
+.btn-submit {
+  background-color: #0689ba;
+  color: #fff;
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #005f80;
+}

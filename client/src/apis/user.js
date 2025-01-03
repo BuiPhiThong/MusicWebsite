@@ -22,3 +22,9 @@ export const apiSaveAPlaylist2= (slug,name)=>axios({
     method:'post',
     data:{name}
 })
+
+export const apiUpdateProfile=(formdata)=>axios({
+    url:'/user/',
+    method:'put',
+    data:formdata
+})

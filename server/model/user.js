@@ -27,6 +27,13 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: Boolean,
+      default:true
+    },
+    address: {
+      type: String,
+    },
+    description: {
+      type: String,
     },
     avatar: {
       type: String,
@@ -101,3 +108,10 @@ userSchema.methods = {
   },
 };
 module.exports = mongoose.model("User", userSchema);
+// default: () => {
+//   const today = new Date();
+//   const day = String(today.getDate()).padStart(2, '0'); // Lấy ngày và đảm bảo có 2 chữ số
+//   const month = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần +1
+//   const year = today.getFullYear();
+//   return `${day}/${month}/${year}`; // Định dạng dd/mm/yyyy
+// },
