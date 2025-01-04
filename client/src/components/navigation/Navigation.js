@@ -189,7 +189,7 @@ const handleNavigateMylist=()=>{
   navigate(`/mylist`)
 }
 const handleNavigateManagerAccount =()=>{
-  navigate(`/manageraccount`)
+  navigate("/manageraccount?managerprofile=true")
 }
   return (
     <div className="row align-items-center pt-3">

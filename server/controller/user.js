@@ -223,6 +223,23 @@ const resetPassword = asynHandler(async (req, res) => {
   });
 });
 
+const changePassword = asynHandler(async (req, res) => {
+  const { oldpass, newpass } = req.body;
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+  const isMatch =await bcrypt.compare(oldpass, user?.password);
+  if (!isMatch) {
+    throw new Error("Mật khẩu cũ sai");
+  }
+  user.password = newpass;
+
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    mess: "Đổi mật khẩu thành công",
+  });
+});
 const getAllUser = asynHandler(async (req, res) => {
   const allUser = await User.find();
 
@@ -253,11 +270,11 @@ const uploadImageUser = asynHandler(async (req, res) => {
 });
 
 const updateUser = asynHandler(async (req, res) => {
-  const { _id } = req.user;  
+  const { _id } = req.user;
   if (Object.keys(req.body).length === 0 && !req.file)
     throw new Error("Missing input");
   console.log(req.file);
-  
+
   const data = { ...req.body };
   if (req.file) {
     data.avatar = req.file.path;
@@ -346,49 +363,59 @@ const saveAPlaylist = asynHandler(async (req, res) => {
   const { _id } = req.user;
   const playlist = await PlayList.findOne({ slug: slug });
   const wishlist = {
-    name: playlist.name +' T-GT',
+    name: playlist.name + " T-GT",
     image: playlist.image,
     songs: playlist.songs,
   };
-  const user= await User.findById(_id)
-  const exitedWishlist = user?.wishlist?.find((el)=>el?.name===wishlist.name)
-  if(exitedWishlist){
-    throw new Error(`Playlist with name ${playlist?.name} has been saved.Please enter another name to avoid duplicates`)
-  } 
-  const response = await User.findByIdAndUpdate(_id,
-    {$push:{wishlist:wishlist}},
-    {new:true}
-  )
+  const user = await User.findById(_id);
+  const exitedWishlist = user?.wishlist?.find(
+    (el) => el?.name === wishlist.name
+  );
+  if (exitedWishlist) {
+    throw new Error(
+      `Playlist with name ${playlist?.name} has been saved.Please enter another name to avoid duplicates`
+    );
+  }
+  const response = await User.findByIdAndUpdate(
+    _id,
+    { $push: { wishlist: wishlist } },
+    { new: true }
+  );
   return res.status(200).json({
-    success: response? true:false,
-    mess:response?wishlist: 'Fail to save playlist'
-  })
+    success: response ? true : false,
+    mess: response ? wishlist : "Fail to save playlist",
+  });
 });
 
 const saveAPlaylist2 = asynHandler(async (req, res) => {
   const { slug } = req.params;
   const { _id } = req.user;
-  const {name} = req.body
-  
+  const { name } = req.body;
+
   const playlist = await PlayList.findOne({ slug: slug });
   const wishlist = {
-    name:  name +' T-GT',
+    name: name + " T-GT",
     image: playlist.image,
     songs: playlist.songs,
   };
-  const user= await User.findById(_id)
-  const exitedWishlist = user?.wishlist?.find((el)=>el?.name===wishlist.name)
-  if(exitedWishlist){
-    throw new Error(`Playlist with name ${name} has been saved.Please enter another name to avoid duplicates`)
-  } 
-  const response = await User.findByIdAndUpdate(_id,
-    {$push:{wishlist:wishlist}},
-    {new:true}
-  )
+  const user = await User.findById(_id);
+  const exitedWishlist = user?.wishlist?.find(
+    (el) => el?.name === wishlist.name
+  );
+  if (exitedWishlist) {
+    throw new Error(
+      `Playlist with name ${name} has been saved.Please enter another name to avoid duplicates`
+    );
+  }
+  const response = await User.findByIdAndUpdate(
+    _id,
+    { $push: { wishlist: wishlist } },
+    { new: true }
+  );
   return res.status(200).json({
-    success: response? true:false,
-    mess:response?wishlist: 'Fail to save playlist'
-  })
+    success: response ? true : false,
+    mess: response ? wishlist : "Fail to save playlist",
+  });
 });
 module.exports = {
   register,
@@ -397,6 +424,7 @@ module.exports = {
   refreshToken,
   logout,
   forgotPassword,
+  changePassword,
   resetPassword,
   uploadImageUser,
   updateUser,
@@ -405,5 +433,5 @@ module.exports = {
   createWishlist,
   updateWishlist,
   saveAPlaylist,
-  saveAPlaylist2
+  saveAPlaylist2,
 };

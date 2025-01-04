@@ -88,7 +88,7 @@ const userSchema = new mongoose.Schema(
 );
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    next();//dùng để đổi mật khẩu hay đăng kí khi mật khẩu có sự thay đổi 
   }
   const salt = bcrypt.genSaltSync(10);
 
@@ -99,10 +99,7 @@ userSchema.methods = {
   createPasswordChangToken: function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    this.passwordResetToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
     this.passwordResetExpire = Date.now() + 5 * 60 * 1000;
     return resetToken;
   },

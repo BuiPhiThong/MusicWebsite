@@ -98,36 +98,14 @@ const SearchHome = () => {
 
   const handleSongSearchClick = () => {
     setSearchType("song");
-    // const searchQuery = new URLSearchParams(location.search).get("all");
-    // if (searchQuery) {
-    //   dispatch(fetchDataSongSearch(searchQuery, currentPageSong, limitSong)); // Gọi API tìm kiếm bài hát
-    // }
   };
   const handleClickPlaylist = () => {
     setSearchType("playlist");
-    // const searchQuery = new URLSearchParams(location.search).get("all");
-    // if (searchQuery) {
-    //   dispatch(fetchDataSearchAll(searchQuery)); // Gọi API tìm kiếm Playlist
-    // }
   };
 
   const handleClickSinger = () => {
     setSearchType("singer");
-    // const searchQuery = new URLSearchParams(location.search).get("all");
-    // if (searchQuery) {
-    //   dispatch(fetchDataSingerSearch(searchQuery)); // Gọi API tìm kiếm Singer
-    // }
   };
-
-  // const handlePageChange = (newPage) => {
-  //   if (newPage > 0 && newPage <= totalPageSong) {
-  //     dispatch(dataSearchReducer.actions.setCurrentPageSong(newPage)); // Cập nhật trang hiện tại
-  //     dispatch(
-  //       fetchDataSongSearch({ text: keySearch, page: newPage, limit: 5 })
-  //     );
-  //   }
-  // };
-
   const handlePageChange = (page) => {
     dispatch(dataSearchReducer.actions.setCurrentPageSong(page));
 

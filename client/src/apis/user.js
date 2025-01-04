@@ -28,3 +28,9 @@ export const apiUpdateProfile=(formdata)=>axios({
     method:'put',
     data:formdata
 })
+
+export const apiChangePassword=(data)=>axios({
+    url:'/user/changepassword',
+    method:'put',
+    data:data
+})
