@@ -430,3 +430,267 @@ input[type="number"] {
 .btn-submit:hover {
   background-color: #005f80;
 }
+
+
+
+/*
+Playlist
+
+*/
+.check_field_delete {
+  float: left;
+  width: 920px;
+  border-bottom: #CCCCCC solid 1px;
+  margin-bottom: 0px;
+  line-height: 20px;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 40px;
+  cursor: pointer;
+}
+
+/* Tùy chỉnh checkbox */
+input[type="checkbox"] {
+  appearance: none; /* Xóa kiểu mặc định của trình duyệt */
+  width: 20px;
+  height: 20px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Hiệu ứng hover cho checkbox */
+input[type="checkbox"]:hover {
+  border-color: #0056b3;
+  background-color: #f1f1f1;
+}
+
+/* Khi checkbox được chọn */
+input[type="checkbox"]:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+/* Dấu tích khi checkbox được chọn */
+input[type="checkbox"]:checked::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+}
+
+/* Nút Xóa và Tạo Playlist */
+.check_field_delete .btn_delete_checkbox {
+  float: left;
+  background: #fbfbfc url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1318px no-repeat;
+  padding: 0 10px 0 26px;
+  line-height: 24px;
+  height: 24px;
+  border-radius: 3px;
+  color: #333333;
+  border: #a6a6a6 solid 1px;
+  margin-top: 0px;
+  margin-left:-16px;
+  cursor: pointer;
+}
+
+.check_field_delete .btn_delete_checkbox.active {
+  background: #e74c3c url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1414px no-repeat;
+  border: #e74c3c solid 1px;
+  color: #FFFFFF;
+  margin-left: 1px;
+}
+
+
+
+
+a {
+  color: rgba(0, 0, 0, 0.88);
+  text-decoration: none;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+a, a:hover, a:active, a:focus {
+  outline: 0;
+}
+
+/* User agent stylesheet */
+a:-webkit-any-link {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+
+/*list playlist*/
+.user_cp_profile_playlist {
+  width: 920px;
+  float: left;
+  margin-bottom: 0px;
+}
+
+.show_cp_profile_playlist {
+  width: 920px;
+  float: left;
+}
+
+ul.show_cp_profile_playlist li {
+  width: 920px;
+  float: left;
+  border-top: #f3f3f3 solid 1px;
+  padding: 20px 0 20px 0;
+}
+
+ul.show_cp_profile_playlist li .box_action_edit {
+  position: absolute;
+  right: 0;
+  height: 28px;
+  padding: 0px 0px;
+  width: auto;
+  margin: 35px 20px 0 0;
+  display: none;
+}
+
+.btn_edit_item {
+  float: right;
+  margin-left: 5px;
+  background: #fbfbfc url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1382px no-repeat;
+  padding: 0 10px 0 26px;
+  line-height: 24px;
+  height: 24px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #333333;
+  border: #a6a6a6 solid 1px;
+  margin-top: 0px;
+}
+
+.btn_delete_item {
+  float: right;
+  background: #fbfbfc url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1318px no-repeat;
+  padding: 0 10px 0 26px;
+  line-height: 24px;
+  height: 24px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #333333;
+  border: #a6a6a6 solid 1px;
+  margin-top: 0px;
+}
+
+
+
+
+.check_data {
+  float: left;
+  border: 0px;
+  margin: 0px;
+  padding: 0;
+  margin-right: 0px;
+}
+/* Sử dụng checkbox chuẩn mà không ẩn nó */
+
+
+li {
+  list-style: none;
+}
+
+
+/* Wrapper for the content */
+.content {
+  position: relative; /* Enables relative positioning for its children */
+  display: flex;
+  gap: 10px; /* Adds space between the image and text */
+}
+
+/* Left box containing the image */
+.box-left {
+  width: 152px;
+  height: 152px;
+  flex-shrink: 0; /* Prevents shrinking of the image container */
+  position: relative; /* Enables using the 'top' property */
+}
+
+.box-left img {
+  width: 100%;
+  height: 100%; /* Ensures the image fits the container */
+  object-fit: cover; /* Maintains aspect ratio while filling the container */
+}
+
+/* Right box containing the text */
+.box-right {
+  flex: 1; /* Allows the text container to take up remaining space */
+  position: relative; /* Enables using the 'top' property */
+}
+
+.box-right h3 {
+  margin: 0;
+  font-size: 18px; /* Adjust font size for the album name */
+}
+
+.box_list_singer {
+  font-size: 12px;
+  color: #a2a2a2;
+  margin-top: 8px; /* Adds spacing below the album name */
+}
+
+.box_list_singer span {
+  display: inline-block;
+  width: 10px;
+  height: 14px;
+  background: url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) left -1019px no-repeat;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+
+.box_info_upload_export {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Box actions initially hidden */
+.box-actions {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+/* Show .box-actions when hovering over .content */
+.content:hover .box-actions {
+  display: flex; /* Make it visible */
+}
+
+/* Styling for delete and edit buttons */
+.btn_delete_checkbox {
+  background: #fbfbfc url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1318px no-repeat;
+  padding: 0 10px 0 26px;
+  line-height: 24px;
+  height: 24px;
+  border-radius: 3px;
+  color: #333333;
+  border: 1px solid #a6a6a6;
+  text-decoration: none; /* Remove underline from links */
+  display: flex; /* Align content for better spacing */
+  align-items: center;
+}
+
+.btn_delete_checkbox.active {
+  background: #e74c3c url(https://stc-id.nixcdn.com/v11/images/icon-repeat.png) 10px -1414px no-repeat;
+  border: 1px solid #e74c3c;
+  color: #ffffff;
+}
+

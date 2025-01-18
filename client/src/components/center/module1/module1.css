@@ -16,18 +16,18 @@ ul.row img {
   position: relative;
 }
 
-.play-icon {
+.module-icon {
   font-size: 40px; /* Kích thước biểu tượng */
   color: white; /* Màu sắc của biểu tượng */
   position: absolute;
   top: 50%; /* Căn giữa theo chiều dọc */
-  left: 50%; /* Căn giữa theo chiều ngang */
+  left: 52%; /* Căn giữa theo chiều ngang */
   transform: translate(-50%, -50%); /* Đảm bảo căn chính xác */
   opacity: 0; /* Ẩn biểu tượng khi không hover */
   transition: opacity 0.3s ease; /* Hiệu ứng mượt mà khi hiện/ẩn */
 }
 
-.playlist-item:hover .play-icon {
+.playlist-item:hover .module-icon {
   opacity: 1; /* Hiển thị biểu tượng khi hover */
 }
 

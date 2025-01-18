@@ -4,7 +4,8 @@ const PlaylistType = require("../model/playlistType");
 const asyncHandler = require("express-async-handler");
 const mongoose = require('mongoose');
 const { default: slugify } = require("slugify");
-const slugtify = require('slugify')
+const slugtify = require('slugify');
+const { options } = require("../routes/user");
 const createPlaylist = asyncHandler(async (req, res) => {
   const { name, image } = req.body;
   if (Object.keys(req.body).length === 0) throw new Error('Missing Input');
@@ -168,6 +169,9 @@ const updateSlugManyPlaylist = asyncHandler(async (req, res) => {
     data: result,
 });
 });
+
+
+
 module.exports = {
   createPlaylist,
   updatePlaylist,

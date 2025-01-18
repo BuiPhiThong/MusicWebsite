@@ -3,14 +3,25 @@ import "./ManagerAccount.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrent } from "../../../../reducers/authSlice";
+import { MdDelete, MdEdit } from "react-icons/md";
 import { toast } from "react-toastify";
 import { Login } from "../../../public";
 import {
   convertToDate,
   convertToDateInputFormat,
 } from "../../../../ultils/helper";
-import { apiChangePassword, apiUpdateProfile } from "../../../../apis/user";
+import {
+  apiChangePassword,
+  apiDeleteAllWishlist,
+  apiDeleteWishlist,
+  apiUpdateProfile,
+} from "../../../../apis/user";
 import { useForm } from "react-hook-form";
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  rel="stylesheet"
+/>;
+
 const ManagerAccount = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,6 +32,9 @@ const ManagerAccount = () => {
   const [notifyConfirm, setNotifyConfirm] = useState(false);
   const [editImage, setEditImage] = useState(null); //Lưu trữ để hiển thị ngay khi chọn
   const [selectedAvatarFile, setSelectedAvatarFile] = useState(null); // Lưu trữ file ảnh để gửi lên cloudary
+  const [selectedPlaylist, setSelectedPlaylist] = useState([]);
+  const [selectedAllPlaylist, setSelectedAllPlaylist] = useState([]);
+
   // Trạng thái lưu mục được chọn
   const [activeItem, setActiveItem] = useState("Manager");
   const {
@@ -72,6 +86,7 @@ const ManagerAccount = () => {
       setInitialFormEdit(initialForm);
     }
   }, [user]);
+
   // Hàm xử lý khi nhấp vào mục menu
   const handleMenuClick = (item) => {
     setActiveItem(item); // Lưu mục đang được chọn
@@ -107,7 +122,6 @@ const ManagerAccount = () => {
   };
   const handleChangeEdit = (e) => {
     const { name, value } = e.target;
-
     if (name === "dateOfBirth") {
       const [year, month, day] = value.split("-"); //type mặc định của input date
       setFormEdit((prev) => ({
@@ -179,20 +193,75 @@ const ManagerAccount = () => {
   };
   const handleChangePassword = async (data) => {
     try {
-      const dataChange={
-        oldpass:data?.oldpassword,
-        newpass:data?.newpassword
-      }
-      const response = await apiChangePassword(dataChange)
+      const dataChange = {
+        oldpass: data?.oldpassword,
+        newpass: data?.newpassword,
+      };
+      const response = await apiChangePassword(dataChange);
       console.log(response);
-      if(response?.success){
-        toast(`${response?.mess}`)
+      if (response?.success) {
+        toast(`${response?.mess}`);
       }
     } catch (error) {
-      toast(`${error?.response?.data?.mess}`)
+      toast(`${error?.response?.data?.mess}`);
     }
   };
+
+  const handleSelectedPlaylist = (id) => {
+    if (!selectedPlaylist.includes(id)) {
+      setSelectedPlaylist((prev) => [...prev, id]);
+      // setSelectedAllPlaylist((prev) => [...prev, id]);
+    } else {
+      const filteredCheckbox = selectedPlaylist.filter((item) => item !== id);
+      setSelectedPlaylist(filteredCheckbox);
+      // setSelectedAllPlaylist(filteredCheckbox);
+    }
+  };
+  // console.log(selectedPlaylist);
+
+  const handleCheckAllPlaylist = () => {
+    if (idCheckAll?.length === selectedPlaylist?.length) {
+      setSelectedPlaylist([]);
+    } else {
+      setSelectedPlaylist(idCheckAll);
+    }
+  };
+
+  const idCheckAll = user?.wishlist?.map((item) => item?._id);
+
   const newPassword = watch("newpassword");
+
+  const handleDeletedPlaylist = async (id) => {
+    const alert = window.confirm(`Are you sure to delete wishlist?`);
+    console.log(alert);
+
+    if (alert) {
+      try {
+        const response = await apiDeleteWishlist(id);
+        if (response?.success) {
+          toast("Deleted wishlist successfully!");
+          dispatch(fetchCurrent());
+        }
+      } catch (error) {
+        toast("Fail to deleted");
+      }
+    }
+  };
+
+  const handleDeleteAllPlaylist = async () => {
+    if (idCheckAll?.length === selectedPlaylist?.length && idCheckAll?.length>0) {
+      const alert = window.confirm("Are you sure to delete all wishlist");
+      if (alert) {
+        try {
+          const response = await apiDeleteAllWishlist();
+          if (response?.success) {
+            toast(`${response?.mess}`);
+            dispatch(fetchCurrent());
+          }
+        } catch (error) {}
+      }
+    }
+  };
   return (
     <div className="wraper mt-4">
       <div className="content-wraper row">
@@ -415,6 +484,107 @@ const ManagerAccount = () => {
               </div>
             </div>
           )
+        ) : (
+          ""
+        )}
+
+        {activeItem === "playlist" ? (
+          <div className="col-md-10">
+            <div className="box-group-left">
+              <h2 className="" style={{ color: "#0689ba" }}>
+                Playlist
+              </h2>
+            </div>
+            <div className="check_field_delete box-checkbox">
+              <input
+                id="checkAll"
+                type="checkbox"
+                checked={idCheckAll.length>0 && idCheckAll?.length === selectedPlaylist?.length}
+                onClick={() => handleCheckAllPlaylist()}
+              />
+              <label for="checkbox1">&nbsp;</label>
+              <a
+                className="btn_delete_checkbox mx-1 text-decoration-none"
+                onClick={() => handleDeleteAllPlaylist()}
+              >
+                Xóa
+              </a>
+              <a className="btn_delete_checkbox active text-decoration-none">
+                Tạo Playlist
+              </a>
+            </div>
+
+            <div className="user_cp_profile_playlist">
+              <ul className="show_cp_profile_playlist">
+                {user?.wishlist?.map((item, index) => (
+                  <li key={index}>
+                    <div className="box_action_edit">
+                      <a href="" className="btn_edit_item"></a>
+                      <a href="" className="btn_delete_item"></a>
+                    </div>
+                    <span className="check_data box-checkbox mx-2">
+                      <input
+                        id={`check-${item?._id}`} // Đảm bảo ID là duy nhất
+                        type="checkbox"
+                        name="check_video"
+                        checked={selectedPlaylist?.includes(item?._id)}
+                        onChange={() => handleSelectedPlaylist(item?._id)}
+                      />
+                      <label htmlFor={`check-${item?._id}`}>&nbsp;</label>{" "}
+                    </span>
+
+                    <div className="content">
+                      <div className="box-left">
+                        <a href="" className="avatar">
+                          <img
+                            src={
+                              item?.image ||
+                              "https://avatar-ex-swe.nixcdn.com/playlist/2024/12/05/a/4/a/b/1733388587539.jpg"
+                            }
+                            alt=""
+                          />
+                        </a>
+                      </div>
+                      <div className="box-right">
+                        <h3>
+                          <a
+                            href=""
+                            className="name_album_search text-decoration-none"
+                          >
+                            {item?.name}
+                          </a>
+                        </h3>
+                        <div className="box_list_singer">
+                          <span></span>
+                          Đang Cập Nhật
+                        </div>
+                        <div className="box_info_upload_export">
+                          <span></span>
+                        </div>
+                      </div>
+                      <div className="box-actions">
+                        <a
+                          className="btn_delete_checkbox mx-1 text-decoration-none"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDeletedPlaylist(item?._id);
+                          }}
+                        >
+                          Xóa
+                        </a>
+                        <a
+                          href=""
+                          className="btn_delete_checkbox mx-1 text-decoration-none active"
+                        >
+                          Chỉnh sửa
+                        </a>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         ) : (
           ""
         )}

@@ -1,21 +1,58 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Profile.css";
 import { FaHome, FaEdit, FaPlay } from "react-icons/fa";
 import { IoMdCreate } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrent } from "../../../../reducers/authSlice";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { apiCreateWishList } from "../../../../apis/user";
 const Profile = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [isNewPlaylistPopupVisible, setNewPlaylistPopupVisible] =
+    useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
   const { isLogged, user, errorCurrent, accessToken } = useSelector(
     (state) => state.auth
   );
   useEffect(() => {
     if (isLogged && accessToken) dispatch(fetchCurrent());
   }, [dispatch, isLogged, accessToken]);
-  console.log(user);
- 
+
+
+  const handleAddplaylist = async (data) => {
+    
+    const convertName = data?.displayMode==='0'?'Public':'Private'
+    const newData = {
+      name:data?.name,
+      displayMode:convertName
+    }    
+    try {
+      const response = await apiCreateWishList(null,newData)
+      const wishlist = response?.data?.wishlist
+      const lastItem = wishlist[wishlist.length-1]
+      if(response?.success){
+        
+        navigate(`/editplaylist/${lastItem?._id}`)
+      }
+    } catch (error) {
+      toast(`${error?.response?.data?.mess}`,'error')
+    }
+    
+  };
+  const closeNewPlaylistPopup = () => {
+    setNewPlaylistPopupVisible(false)
+  };
+  const openNewPlaylist =()=>{
+    setNewPlaylistPopupVisible(true)
+  }
   return (
     <div className="content-wrap">
       <div className="content-user-profile row">
@@ -120,7 +157,10 @@ const Profile = () => {
       <div className="content-user-menu row">
         <ul className="list-unstyled d-flex">
           <li>
-            <FaHome className="fs-4 text-primary" onClick={()=>navigate('/')}/>
+            <FaHome
+              className="fs-4 text-primary"
+              onClick={() => navigate("/")}
+            />
           </li>
           <li>Playlist</li>
           <li>Video</li>
@@ -135,7 +175,7 @@ const Profile = () => {
           <div className="d-flex justify-content-end">
             <div
               className="mx-1 action-button"
-              onClick={() => alert("Tạo Playlist")}
+              onClick={openNewPlaylist}
             >
               Tạo Playlist <IoMdCreate className="mb-1" />
             </div>
@@ -143,6 +183,69 @@ const Profile = () => {
               Chỉnh sửa <FaEdit className="mb-1" />
             </div>
           </div>
+          {isNewPlaylistPopupVisible && (
+            <div className="popup-overlay">
+              <div className="popup new-playlist-popup">
+                <h4 className="text-center">Tạo danh sách phát mới</h4>
+
+                <form onSubmit={handleSubmit(handleAddplaylist)} method="post">
+                  <div className="form-group">
+                    <label htmlFor="playlistName" className="form-label">
+                      Name
+                    </label>
+                    <input
+                      id="playlistName"
+                      type="text"
+                      placeholder="Nhập tên danh sách phát"
+                      className="form-control"
+                      {...register("name", {
+                        required: "Name là bắt buộc",
+                      })}
+                    />
+                  </div>
+                  {errors.name && (
+                    <div className="text-danger fs-6 justify-content-end">
+                      {errors.name.message}
+                    </div>
+                  )}
+                  <div className="form-group">
+                    <label htmlFor="playlistPrivacy" className="form-label">
+                      Visibility:
+                    </label>
+                    <select
+                      id="playlistPrivacy"
+                      className="form-control"
+                      {...register("displayMode", {
+                        required: "Chọn quyền riêng tư",
+                      })}
+                    >
+                      <option value="0">Public</option>
+                      <option value="1">Private</option>
+                    </select>
+                    {errors.displayMode && (
+                      <span className="text-danger">
+                        {errors?.displayMode?.message}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Nút Hủy và Tạo */}
+                  <div className="d-flex justify-content-end">
+                    <button
+                      type="button"
+                      className="rounded-pill me-2"
+                      onClick={closeNewPlaylistPopup}
+                    >
+                      Hủy
+                    </button>
+                    <button type="submit" className="rounded-pill">
+                      Tạo
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
           <ul className="row gap-3 list-unstyled mt-3">
             {user?.wishlist?.map((el, index) => (
               <li className="col-md-2 playlist-item">

@@ -8,7 +8,6 @@ const { genAccessToken, genRefreshToken } = require("../middlewares/jwt");
 const { sendEmail } = require("../ultils/sendMail");
 const crypto = require("crypto");
 const uniquid = require("uniqid");
-const { log } = require("console");
 const playlist = require("../model/playlist");
 
 const register = asynHandler(async (req, res) => {
@@ -133,7 +132,6 @@ const refreshToken = asynHandler(async (req, res) => {
       .json({ success: false, message: "No refresh token in cookie!" });
   }
   const decoded = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
-  console.log(decoded);
 
   // Kiểm tra `refreshToken` trong cookie so với token trong DB
   const match = await User.findOne({
@@ -177,6 +175,7 @@ const logout = asynHandler(async (req, res) => {
 
 const forgotPassword = asynHandler(async (req, res) => {
   const { email } = req.body;
+
   if (!email) throw new Error("Missing input!");
 
   const user = await User.findOne({ email });
@@ -199,8 +198,10 @@ const forgotPassword = asynHandler(async (req, res) => {
 
 const resetPassword = asynHandler(async (req, res) => {
   const { password } = req.body;
+  console.log(password);
 
   const { token } = req.params;
+  console.log(token);
 
   const checkToken = crypto.createHash("sha256").update(token).digest("hex");
 
@@ -227,7 +228,7 @@ const changePassword = asynHandler(async (req, res) => {
   const { oldpass, newpass } = req.body;
   const { _id } = req.user;
   const user = await User.findById(_id);
-  const isMatch =await bcrypt.compare(oldpass, user?.password);
+  const isMatch = await bcrypt.compare(oldpass, user?.password);
   if (!isMatch) {
     throw new Error("Mật khẩu cũ sai");
   }
@@ -254,7 +255,6 @@ const uploadImageUser = asynHandler(async (req, res) => {
   if (!req.file) throw new Error("Missing input!");
 
   const updateImg = req.file.path;
-  console.log(updateImg);
 
   const response = await User.findByIdAndUpdate(
     uid,
@@ -273,7 +273,6 @@ const updateUser = asynHandler(async (req, res) => {
   const { _id } = req.user;
   if (Object.keys(req.body).length === 0 && !req.file)
     throw new Error("Missing input");
-  console.log(req.file);
 
   const data = { ...req.body };
   if (req.file) {
@@ -304,10 +303,11 @@ const getCurrent = asynHandler(async (req, res) => {
 const createWishlist = asynHandler(async (req, res) => {
   const { _id } = req.user;
   const { sid } = req.params;
+  console.log(sid);
+  
   const { name, displayMode } = req.body;
-  console.log(name, displayMode, sid);
-
-  if (!name || !sid || !displayMode) {
+  
+  if (!name) {
     throw new Error("Missing input to create wishlist!");
   }
   const user = await User.findById(_id);
@@ -318,10 +318,15 @@ const createWishlist = asynHandler(async (req, res) => {
   if (isDuplicate) {
     throw new Error(`Wishlist with name ${name} has been exited!`);
   }
-  user.wishlist.push({ name: name, songs: sid, displayMode: displayMode });
+  const newPlaylist = {
+    name,
+    displayMode,
+    songs: sid ? [sid] : [],
+  };
+  user.wishlist.push(newPlaylist);
   await user.save();
 
-  return res.status(200).json({ success: true, mess: "Create successfully!" });
+  return res.status(200).json({ success: true, mess: "Create successfully!",data:user });
 });
 
 const updateWishlist = asynHandler(async (req, res) => {
@@ -417,6 +422,43 @@ const saveAPlaylist2 = asynHandler(async (req, res) => {
     mess: response ? wishlist : "Fail to save playlist",
   });
 });
+
+const deletedWishlist = asynHandler(async(req,res)=>{
+    const {wid} = req.params  
+    const {_id}= req.user
+    const user = await User.findById(_id)    
+    if(!user){
+      return res.status(404).json({
+        success:false,
+        mess:'User not found!'
+      })
+    }
+    const deletedWishlist = user?.wishlist?.filter((item)=>item?._id.toString() !== wid)
+    user.wishlist = deletedWishlist
+    await user.save()
+    return res.status(200).json({
+      success:true,
+      mess:deletedWishlist
+    }
+    )
+})
+const deletedAllWishlist = asynHandler(async(req,res)=>{
+    const {_id}= req.user
+
+    try {
+    await User.updateOne({_id:_id},{$set:{wishlist:[]}},{new:true})
+    return res.status(200).json({
+      success:true,
+      mess:'The entire wishlist has been successfully deleted'
+    })
+    } catch (error) {
+      return res.status(200).json({
+        success:false,
+        mess:'An error occurred while deleting wishlist',
+        error:error
+      })
+    }
+})
 module.exports = {
   register,
   getAllUser,
@@ -434,4 +476,6 @@ module.exports = {
   updateWishlist,
   saveAPlaylist,
   saveAPlaylist2,
+  deletedWishlist,
+  deletedAllWishlist
 };

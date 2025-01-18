@@ -27,8 +27,7 @@ const ListenPlaylist = () => {
   const dispatch = useDispatch();
   const audioRef = useRef(null);
   const [isPopupVisible, setPopupVisible] = useState(false);
-  const [isNewPlaylistPopupVisible, setNewPlaylistPopupVisible] =
-    useState(false);
+  const [isNewPlaylistPopupVisible, setNewPlaylistPopupVisible] =useState(false);
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [currentSelectedSong, setCurrentSelectedSong] = useState(null); // Lưu bài hát hiện tại
   const [formAddplaylist, setFormAddPlaylist] = useState({
@@ -57,7 +56,7 @@ const ListenPlaylist = () => {
     isLoading,
     error,
   } = useSelector((state) => state.listenPlaylist);
-  const { isLogged } = useSelector((state) => state.auth);
+  const { isLogged,user } = useSelector((state) => state.auth);
   const { profile } = useSelector((state) => state.actionUser);
   const { slug } = useParams();
   useEffect(() => {
@@ -197,15 +196,15 @@ const ListenPlaylist = () => {
         }
         const updatedData = response.mess;
         setSelectedPlaylists((prev) => {
-          const isSelectedCurrent =
-            updatedData.songs.includes(currentSelectedSong);
+          const isSelectedCurrent =updatedData.songs.includes(currentSelectedSong);
           if (isSelectedCurrent) {
             return [...prev, plid];
           }
 
-          return prev.filter((idprev) => idprev !== plid);
+          return prev.filter((idprev) => idprev !== plid);     
         });
-        console.log(selectedPlaylists);
+        dispatch(fetchCurrentPlaylist());
+        // console.log(selectedPlaylists);
       } else {
         toast.success(`Updated Failed`, { icon: "🚀" });
       }
@@ -416,7 +415,7 @@ const ListenPlaylist = () => {
               {isNewPlaylistPopupVisible && (
                 <div className="popup-overlay">
                   <div className="popup new-playlist-popup">
-                    <h4>Tạo danh sách phát mới</h4>
+                    <h4 className="text-center">Tạo danh sách phát mới</h4>
 
                     <form
                       onSubmit={handleSubmit(handleAddplaylist)}

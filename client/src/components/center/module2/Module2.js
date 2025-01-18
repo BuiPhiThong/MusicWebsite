@@ -33,7 +33,7 @@ const Module2 = () => {
               <div className="image-container">
                 <a href="#">
                   <img src={playlist.image} alt={playlist.name} />
-                  <FaRegCirclePlay className="play-icon" />
+                  <FaRegCirclePlay className="module-icon" />
                 </a>
               </div>
               <div className="mt-2">{playlist.name}</div>

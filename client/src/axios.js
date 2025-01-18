@@ -5,7 +5,7 @@ import { apiRefreshToken } from "./apis/authen";
 // Tạo một instance axios riêng biệt
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL_SERVER,
-  withCredentials: true,  // Bật chế độ gửi cookie cùng với yêu cầu
+  withCredentials: true, // Bật chế độ gửi cookie cùng với yêu cầu
 });
 
 // Request Interceptor
@@ -32,10 +32,9 @@ instance.interceptors.response.use(
   async (error) => {
     const { response, config } = error;
     console.log(error);
-    
-    if (response?.status === 401) {
-      // Kiểm tra xem lỗi 401 là do hết hạn token hay lỗi xác thực
-      if (response.data &&  response.data.mess==='Invalid access token!') {
+    if (response?.status === 401) {   
+         
+      if (response.data && response.data.mess === "Invalid access token!") {
         // Nếu thông báo lỗi là "Token expired", tức là token hết hạn
         if (!config._retry) {
           config._retry = true; // Đánh dấu request đã được retry
@@ -49,6 +48,7 @@ instance.interceptors.response.use(
               // Retry lại request gốc với token mới
               return axios(config); // Retry the original request with new token
             } else {
+              
               return Promise.reject(error);
             }
           } catch (error) {
@@ -57,7 +57,7 @@ instance.interceptors.response.use(
         }
       } else {
         // Xử lý lỗi 401 do xác thực sai tài khoản/mật khẩu
-        return Promise.reject(error);  // Không làm gì thêm nếu là lỗi xác thực
+        return Promise.reject(error); // Không làm gì thêm nếu là lỗi xác thực
       }
     }
 

@@ -16,7 +16,7 @@ ul.row img {
   position: relative;
 }
 
-.play-icon {
+.module-icon {
   font-size: 40px; /* Kích thước biểu tượng */
   color: white; /* Màu sắc của biểu tượng */
   position: absolute;
@@ -27,7 +27,7 @@ ul.row img {
   transition: opacity 0.3s ease; /* Hiệu ứng mượt mà khi hiện/ẩn */
 }
 
-.playlist-item:hover .play-icon {
+.playlist-item:hover .module-icon {
   opacity: 1; /* Hiển thị biểu tượng khi hover */
 }
 

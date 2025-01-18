@@ -8,6 +8,7 @@ const playlistRouter = require('./playlist')
 const playlistTypeRouter = require('./playlistType')
 const searchRouter = require('./search')
 const authRouter = require('./auth')
+const historyRouter= require('./history')
 const { errHandler,notFound} = require('../middlewares/err')
 
 const initRoutes = (app) => {
@@ -21,6 +22,7 @@ const initRoutes = (app) => {
     app.use('/api/playlisttype',playlistTypeRouter)
     app.use('/api/homesearch',searchRouter)
     app.use('/api/auth',authRouter)
+    app.use('/api/history',historyRouter)
 
 
 

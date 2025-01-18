@@ -7,9 +7,9 @@ export const apiUpandReWishList= (sid,wid)=>axios({
 })
 
 export const apiCreateWishList= (sid,data)=>axios({
-    url:`/user/createwislist/${sid}`,
+    url: sid ? `/user/createwislist/${sid}` : `/user/createwislist`, // Không thêm `sid` nếu không được truyền
     method:'post',
-    data:data
+    data:data    
 })
 
 export const apiSaveAPlaylist= (slug)=>axios({
@@ -22,6 +22,17 @@ export const apiSaveAPlaylist2= (slug,name)=>axios({
     method:'post',
     data:{name}
 })
+
+export const apiDeleteWishlist= (wid)=>axios({
+    url:`/user/deletedwishlist/${wid}`,
+    method:'put'
+})
+
+export const apiDeleteAllWishlist= ()=>axios({
+    url:`/user/deletedallwishlist`,
+    method:'delete'
+})
+
 
 export const apiUpdateProfile=(formdata)=>axios({
     url:'/user/',

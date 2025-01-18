@@ -41,7 +41,7 @@ const Module1 = () => {
                       src={playlist.image} // Sử dụng trường image từ API
                       alt={playlist.name} // Sử dụng tên playlist làm alt cho ảnh
                     />
-                    <FaRegCirclePlay className="play-icon" />
+                    <FaRegCirclePlay className="module-icon" />
 
                   </a>
                 </div>

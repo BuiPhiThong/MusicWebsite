@@ -29,11 +29,10 @@ export const refreshAccessToken = createAsyncThunk(
   "auth/refreshAccessToken",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await apiRefreshToken();
+      const response = await apiRefreshToken();      
       if (response?.success) {
         return response.accessToken;
       }
-      return rejectWithValue("Refresh token failed");
     } catch (error) {
       return rejectWithValue(error);
     }

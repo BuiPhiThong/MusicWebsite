@@ -170,7 +170,10 @@ const Navigation = () => {
       if (accessToken && isTokenExpired(accessToken)) {
         try {
           // Gọi refreshAccessToken nếu token đã hết hạn
-          await dispatch(refreshAccessToken());
+         const result = await dispatch(refreshAccessToken());
+         if(result?.payload?.response?.data?.success === false){
+           dispatch(authReducer?.actions?.setLogout())
+         }
         } catch (error) {
           console.error("Error refreshing token:", error);
         }

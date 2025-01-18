@@ -6,6 +6,7 @@ const uploader = require('../config/cloudinary.config')
 
 router.post('/',ctrls.createSong)
 router.get('/',ctrls.listSongContribute)
+router.get('/getall/:type',[verifyToken,isAdmin],ctrls.getAllSong)
 router.put('/:soid',ctrls.updateSong)
 router.put('/uploadimage/:soid',[verifyToken,isAdmin],uploader.single('songImg'),ctrls.uploadImageSong)
 router.put('/increaselistion/:soid',[verifyToken],ctrls.incListMusic)
