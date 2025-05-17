@@ -23,6 +23,14 @@ export const apiGetDataPlaylistSearch= (text) => axios({
     method:'get'
 })
 
+export const apiGetDataWishlistSearch = (text)=> axios({
+    url:  `/song/searchsongwishlist/?textSearch=${text}`,
+    method:'get'
+})
+export const apiGetSongAddWishlistById =(id)=>axios({
+    url:  `/song/getsongbyid/${id}`,
+    method:'get'
+})
 
 
 // export const apiGetDataSingerSearch = (text, page = 1, limit = 9) => axios({

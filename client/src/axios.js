@@ -25,6 +25,7 @@ instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 instance.interceptors.response.use(
   async (response) => {
     return response.data; // Trả về dữ liệu trong response

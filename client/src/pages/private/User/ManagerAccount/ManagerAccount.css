@@ -574,6 +574,7 @@ ul.show_cp_profile_playlist li .box_action_edit {
   color: #333333;
   border: #a6a6a6 solid 1px;
   margin-top: 0px;
+  cursor: pointer;
 }
 
 .btn_delete_item {
@@ -588,6 +589,8 @@ ul.show_cp_profile_playlist li .box_action_edit {
   color: #333333;
   border: #a6a6a6 solid 1px;
   margin-top: 0px;
+  cursor: pointer;
+
 }
 
 
@@ -686,6 +689,7 @@ li {
   text-decoration: none; /* Remove underline from links */
   display: flex; /* Align content for better spacing */
   align-items: center;
+  cursor: pointer;
 }
 
 .btn_delete_checkbox.active {
@@ -694,3 +698,103 @@ li {
   color: #ffffff;
 }
 
+
+
+/*radio edit playlist*/
+.radio-group-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Khoảng cách giữa các radio */
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Khoảng cách giữa radio và chữ */
+}
+.radio-group{
+  margin-left: -15px;
+}
+
+.radio-label input[type="radio"] {
+  margin: 0; /* Loại bỏ khoảng cách mặc định */
+}
+
+/*
+form edit songs cua
+*/
+.form-control {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-popup {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  max-height: 200px; /* Chiều cao tối đa */
+  overflow-y: auto; /* Tạo cuộn dọc */
+  z-index: 1000;
+  width: 38%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-result-item {
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: #f0f0f0;
+}
+.select-action {
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.select-action:hover {
+  text-decoration: underline;
+}
+.song-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px; /* Giới hạn chiều cao */
+  overflow-y: auto; /* Tạo cuộn dọc */
+}
+
+.song-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.song-item:last-child {
+  border-bottom: none;
+}
+
+.song-item:hover {
+  background-color: #f0f0f0;
+}

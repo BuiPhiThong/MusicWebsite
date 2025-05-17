@@ -222,6 +222,34 @@ const searchHome = asynHandler(async (req, res) => {
   }
 });
 
+const searchSongWishlist = asynHandler(async(req,res)=>{
+  const {textSearch}= req.query 
+  console.log(textSearch);
+  
+  let songSearch={}
+  if(textSearch){
+    songSearch = {$regex: '^' + textSearch, $options: 'i'} // kí tự ^ là bắt đầu bằng + text search
+  }  
+  try {
+    const response = await Song.
+    find({songName:songSearch}).
+    populate('singerId','singerName').
+    select('songName').sort({listenCountSum:-1})
+    return res.status(200).json({
+      success:response.length>0? true:false,
+      count:response.length,
+      mess: response.length > 0?response:'Không có bản ghi nào'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      mess: "Lỗi server",
+    });
+  }
+})
+
+
+
 const uploadImageSong = asynHandler(async (req, res) => {
   const { soid } = req.params;
   if (!req.file) throw new Error("Missing input!");
@@ -495,6 +523,18 @@ const getAllSong = asynHandler(async(req, res)=>{
     })
 
   })
+
+  const getSongById = asynHandler(async(req,res)=>{
+    const {soid} = req.params
+
+    const response = await Song.findById(soid).select('songName')
+
+    return res.status(200).json({
+      success:response? true : false,
+      mess:response? response:'Can not found song!'
+    })
+    
+  })
 module.exports = {
   createSong,
   updateSong,
@@ -510,5 +550,7 @@ module.exports = {
   getTop4To10SongByIdC,
   searchHome,
   updateSongsSlugs,
-  getAllSong
+  getAllSong,
+  searchSongWishlist,
+  getSongById
 };

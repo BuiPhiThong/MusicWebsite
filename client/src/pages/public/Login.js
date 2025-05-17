@@ -94,9 +94,7 @@ function Login() {
       }
     };
     const handleSubmitResetPass = async (e) => {
-      e.preventDefault();
-      console.log(emailReset);
-      
+      e.preventDefault();      
       if (!emailReset) {
         swal({
           title: "Thông báo",

@@ -9,6 +9,7 @@ const { sendEmail } = require("../ultils/sendMail");
 const crypto = require("crypto");
 const uniquid = require("uniqid");
 const playlist = require("../model/playlist");
+const { default: mongoose } = require("mongoose");
 
 const register = asynHandler(async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
@@ -287,7 +288,10 @@ const updateUser = asynHandler(async (req, res) => {
 
 const getCurrent = asynHandler(async (req, res) => {
   const { _id } = req.user;
-  const user = await User.findById(_id); // Lấy người dùng duy nhất
+  const user = await User.findById(_id).populate({
+    path: "wishlist.songs",
+    select: "songName",
+  }); // Lấy người dùng duy nhất
   if (!user) {
     return res.status(401).json({
       success: false,
@@ -304,9 +308,9 @@ const createWishlist = asynHandler(async (req, res) => {
   const { _id } = req.user;
   const { sid } = req.params;
   console.log(sid);
-  
+
   const { name, displayMode } = req.body;
-  
+
   if (!name) {
     throw new Error("Missing input to create wishlist!");
   }
@@ -326,7 +330,9 @@ const createWishlist = asynHandler(async (req, res) => {
   user.wishlist.push(newPlaylist);
   await user.save();
 
-  return res.status(200).json({ success: true, mess: "Create successfully!",data:user });
+  return res
+    .status(200)
+    .json({ success: true, mess: "Create successfully!", data: user });
 });
 
 const updateWishlist = asynHandler(async (req, res) => {
@@ -349,6 +355,7 @@ const updateWishlist = asynHandler(async (req, res) => {
       isRemoved,
     });
   }
+
   // Nếu bài hát không tồn tại trước đó, thêm vào playlist
   const updatedUser = await User.findOneAndUpdate(
     { _id: _id, "wishlist._id": wid },
@@ -423,42 +430,160 @@ const saveAPlaylist2 = asynHandler(async (req, res) => {
   });
 });
 
-const deletedWishlist = asynHandler(async(req,res)=>{
-    const {wid} = req.params  
-    const {_id}= req.user
-    const user = await User.findById(_id)    
-    if(!user){
-      return res.status(404).json({
-        success:false,
-        mess:'User not found!'
-      })
-    }
-    const deletedWishlist = user?.wishlist?.filter((item)=>item?._id.toString() !== wid)
-    user.wishlist = deletedWishlist
-    await user.save()
-    return res.status(200).json({
-      success:true,
-      mess:deletedWishlist
-    }
-    )
-})
-const deletedAllWishlist = asynHandler(async(req,res)=>{
-    const {_id}= req.user
+const deletedWishlist = asynHandler(async (req, res) => {
+  const { wid } = req.params;
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      mess: "User not found!",
+    });
+  }
+  const deletedWishlist = user?.wishlist?.filter(
+    (item) => item?._id.toString() !== wid
+  );
+  user.wishlist = deletedWishlist;
+  await user.save();
+  return res.status(200).json({
+    success: true,
+    mess: deletedWishlist,
+  });
+});
+const deletedAllWishlist = asynHandler(async (req, res) => {
+  const { _id } = req.user;
 
-    try {
-    await User.updateOne({_id:_id},{$set:{wishlist:[]}},{new:true})
+  try {
+    await User.updateOne(
+      { _id: _id },
+      { $set: { wishlist: [] } },
+      { new: true }
+    );
     return res.status(200).json({
-      success:true,
-      mess:'The entire wishlist has been successfully deleted'
-    })
-    } catch (error) {
-      return res.status(200).json({
-        success:false,
-        mess:'An error occurred while deleting wishlist',
-        error:error
-      })
+      success: true,
+      mess: "The entire wishlist has been successfully deleted",
+    });
+  } catch (error) {
+    return res.status(200).json({
+      success: false,
+      mess: "An error occurred while deleting wishlist",
+      error: error,
+    });
+  }
+});
+
+const removeSongSearchWishlist = asynHandler(async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { wishlistId, songId } = req.body;
+    console.log(wishlistId, songId);
+    //tại sao dùng updateOne thay vì FindOneandUpdateTrả về { matchedCount, modifiedCount }, đủ để biết thao tác thành công hay không.
+    // matchedCount trả về docoment khớp với điều kiện tìm kiếm
+    // modifiedCount trả về số lượng document được sửa đổi
+    const result = await User.updateOne(
+      { _id: _id, "wishlist._id": wishlistId },
+      {
+        $pull: {
+          "wishlist.$.songs": new mongoose.Types.ObjectId(songId),
+        },
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        mess: "User or wishlist not found!",
+      });
     }
-})
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        mess: "Song not found in wishlist or already removed!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Song removed from wishlist successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error?.message,
+    });
+  }
+});
+
+const updateWishlistInManageAccount = asynHandler(async (req, res) => {
+  try {
+    const { _id } = req.user;
+
+    const { idWishlist, ...updateData } = req.body;
+
+    const updateFields = {};
+
+    if (updateData.description)
+      updateFields["wishlist.$.description"] = updateData.description;
+    if (updateData.name) updateFields["wishlist.$.name"] = updateData.name;
+    if (updateData.displayMode)
+      updateFields["wishlist.$.displayMode"] = updateData.displayMode;
+
+    if (req.file) {
+      updateFields["wishlist.$.image"] = req.file.path;
+    }
+
+    // Xử lý songs - parse JSON string và chuyển đổi sang ObjectId
+    if (updateData.songs) {
+      try {
+        const songs = JSON.parse(updateData.songs);
+        if (Array.isArray(songs)) {
+          updateFields["wishlist.$.songs"] = songs.map(
+            (id) => new mongoose.Types.ObjectId(id)
+          );
+        }
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          mess: "Invalid songs format",
+        });
+      }
+    }
+
+    // Thực hiện update
+    if (idWishlist) {
+      const result = await User.updateOne(
+        {
+          _id: _id,
+          "wishlist._id": idWishlist,
+        },
+        { $set: updateFields }
+      );
+
+      if (result.matchedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          mess: "Wishlist not found!",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        mess: "Wishlist updated successfully",
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        mess: "Wishlist ID is required",
+      });
+    }
+  } catch (error) {
+    console.error("Server error:", error);
+    return res.status(500).json({
+      success: false,
+      mess: error.message,
+    });
+  }
+});
+
 module.exports = {
   register,
   getAllUser,
@@ -477,5 +602,7 @@ module.exports = {
   saveAPlaylist,
   saveAPlaylist2,
   deletedWishlist,
-  deletedAllWishlist
+  deletedAllWishlist,
+  removeSongSearchWishlist,
+  updateWishlistInManageAccount,
 };

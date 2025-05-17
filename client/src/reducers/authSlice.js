@@ -10,7 +10,6 @@ export const fetchLogin = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(error);
-      
     }
   }
 );
@@ -29,7 +28,7 @@ export const refreshAccessToken = createAsyncThunk(
   "auth/refreshAccessToken",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await apiRefreshToken();      
+      const response = await apiRefreshToken();
       if (response?.success) {
         return response.accessToken;
       }
@@ -70,20 +69,35 @@ const authReducer = createSlice({
       state.accessToken = null;
       state.user = null;
     },
-    updateAccessToken:(state,action)=>{
-      state.accessToken=action.payload
+    updateAccessToken: (state, action) => {
+      state.accessToken = action.payload;
       state.isLogged = true;
       let localStorageData = window.localStorage.getItem("persist:root");
-        if (localStorageData && typeof localStorageData === "string") {
-          localStorageData = JSON.parse(localStorageData);
-          const newAuthData = {
-            ...JSON.parse(localStorageData.auth),
-            accessToken: action.payload,
-          };
-          localStorageData.auth = JSON.stringify(newAuthData);
-          window.localStorage.setItem("persist:root", JSON.stringify(localStorageData));
-        }
-    }
+      if (localStorageData && typeof localStorageData === "string") {
+        localStorageData = JSON.parse(localStorageData);
+        const newAuthData = {
+          ...JSON.parse(localStorageData.auth),
+          accessToken: action.payload,
+        };
+        localStorageData.auth = JSON.stringify(newAuthData);
+        window.localStorage.setItem(
+          "persist:root",
+          JSON.stringify(localStorageData)
+        );
+      }
+    },
+    updateWishlist: (state, action) => {
+      if (state.user && state.user.wishlist) {
+        const { wishlistId, updatedData } = action.payload;
+
+        // Tìm và cập nhật wishlist trong state
+        state.user.wishlist = state.user.wishlist.map((wishlist) =>
+          wishlist._id === wishlistId
+            ? { ...wishlist, ...updatedData }
+            : wishlist
+        );
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -104,15 +118,19 @@ const authReducer = createSlice({
             accessToken: action.payload.accessToken,
           };
           localStorageData.auth = JSON.stringify(newAuthData);
-          window.localStorage.setItem("persist:root", JSON.stringify(localStorageData));
+          window.localStorage.setItem(
+            "persist:root",
+            JSON.stringify(localStorageData)
+          );
         }
       })
+
       .addCase(fetchLogin.rejected, (state, action) => {
         state.loading = false;
         state.errorLogin = action.payload;
         state.isLogged = false;
       })
-      
+
       // Fetch Current User
       .addCase(fetchCurrent.pending, (state) => {
         state.loading = true;
@@ -128,8 +146,7 @@ const authReducer = createSlice({
         state.errorCurrent = action.payload;
       });
 
-
-      builder
+    builder
       .addCase(refreshAccessToken.pending, (state) => {
         state.loading = true;
       })

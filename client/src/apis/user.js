@@ -45,3 +45,17 @@ export const apiChangePassword=(data)=>axios({
     method:'put',
     data:data
 })
+
+// export const apiRemoveSongSearchWishlist = (idWishlist,idSong)=>axios({
+//     url:'/user/removesongsearchwishlist',
+//     method:'put',
+//     data:{wishlistId: idWishlist,songId: idSong}
+// })
+export const apiUpdateWishlistInManageAccount = (formData)=>axios({
+    url:'/user/updateWishlistInManageAccount',
+    method:'put',
+    data: formData,
+    headers: {
+        'Content-Type': 'multipart/form-data',    
+    }
+})

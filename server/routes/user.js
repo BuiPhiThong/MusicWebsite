@@ -28,5 +28,7 @@ router.put('/updatewishlist/:sid',[verifyToken],ctrls.updateWishlist)
 router.put('/changepassword/',[verifyToken],ctrls.changePassword)
 router.put('/deletedwishlist/:wid',[verifyToken],ctrls.deletedWishlist)
 router.delete('/deletedallwishlist',[verifyToken],ctrls.deletedAllWishlist)
+router.put('/removesongsearchwishlist',[verifyToken],ctrls.removeSongSearchWishlist)
+router.put('/updateWishlistInManageAccount',[verifyToken],[uploader.single('image')] ,ctrls.updateWishlistInManageAccount                                                                                                                                                                                                )
 
 module.exports = router
